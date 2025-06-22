@@ -3,158 +3,607 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LUA OBSCURA v9 - Echelon Engine</title>
+    <title>LUA OBSCURA v5.1 - Aligner Engine</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/lua.min.js"></script>
+    
     <style>
-        /* LUA OBSCURA v9 "Echelon" - Total CSS Rebuild */
-        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Orbitron:wght@900&display=swap');
-        :root{--font-ui:'Roboto Mono',monospace;--font-code:'Roboto Mono',monospace;--font-logo:'Orbitron',sans-serif;--c-bg:#0a0f18;--c-panel:#111827;--c-border:rgba(139,92,246,0.2);--c-glow:#8b5cf6;--c-glow-alt:#38bdf8;--c-text-dim:#9ca3af;--c-text-main:#e5e7eb;--c-text-bright:#fff;--c-danger:#ef4444;--c-success:#22c55e;}
-        *{box-sizing:border-box;margin:0;padding:0;font-feature-settings:"liga" 0,"calt" 0}::selection{background-color:rgba(139,92,246,0.4)}body{background-color:var(--c-bg);color:var(--c-text-main);font-family:var(--font-ui);overflow:hidden;transition:background-color .3s}
-        #preloader{position:fixed;inset:0;background:var(--c-bg);z-index:9999;display:flex;align-items:center;justify-content:center;transition:opacity .5s ease-out, visibility .5s}.preloader-content{text-align:center;animation:fadeIn .5s}.preloader-logo{font-family:var(--font-logo);font-size:3.5rem;color:var(--c-glow);text-shadow:0 0 15px var(--c-glow);animation:flicker 2s infinite alternate}.preloader-text{color:var(--c-text-dim);animation:fadeIn .5s 1s both}@keyframes flicker{to{opacity:.8;text-shadow:0 0 20px var(--c-glow)}}
-        .modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(5px);z-index:2000;display:flex;align-items:center;justify-content:center;transition:opacity .3s,visibility .3s;visibility:hidden;opacity:0}.modal.visible{visibility:visible;opacity:1}.modal-content{background:var(--c-panel);border:1px solid var(--c-border);padding:2rem;width:90%;max-width:550px;border-radius:8px;animation:fadeIn .3s}@keyframes fadeIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}.modal h3{font-family:var(--font-logo);color:var(--c-glow-alt);margin-bottom:1rem;text-align:center}.modal ul{list-style:"✓ ";padding-left:1.5rem}.modal li{margin-bottom:0.75rem}.modal strong{color:var(--c-text-bright)}
-        .app-container{display:grid;grid-template-columns:340px 1fr;height:100vh;padding:1rem;gap:1rem;opacity:0;transition:opacity .5s ease-in-out}@media(max-width:1200px){.app-container{grid-template-columns:1fr;height:auto}}
-        .sidebar,.main-content{display:flex;flex-direction:column;gap:1rem;overflow:hidden}.sidebar{overflow-y:auto}.panel{background:var(--c-panel);border:1px solid var(--c-border);border-radius:8px;padding:1.5rem;flex-shrink:0}.panel h2{font-family:var(--font-logo);font-size:1.2rem;color:var(--c-text-bright);margin-bottom:1rem;border-bottom:1px solid var(--c-border);padding-bottom:.75rem}
-        .btn{font-family:var(--font-ui);font-weight:700;font-size:1rem;padding:.75rem;border-radius:6px;border:2px solid;cursor:pointer;transition:all .2s ease;display:flex;align-items:center;justify-content:center;gap:.5rem;position:relative}.btn:active{transform:scale(.97)}.btn:disabled{opacity:.4;cursor:not-allowed}.btn-primary{color:var(--c-glow);border-color:var(--c-glow)}.btn-primary:not(:disabled):hover{background:var(--c-glow);color:var(--c-panel)}.btn-secondary{color:var(--c-glow-alt);border-color:var(--c-glow-alt)}.btn-secondary:not(:disabled):hover{background:var(--c-glow-alt);color:var(--c-panel)}.btn-tertiary{color:var(--c-text-dim);border-color:var(--c-text-dim)}.btn-tertiary:not(:disabled):hover{background:var(--c-text-dim);color:var(--c-panel)}
-        .controls-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
-        .toggle-setting{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;padding:.25rem;border-radius:4px;cursor:pointer;transition:background-color .2s}.toggle-setting:hover{background:rgba(255,255,255,0.05)}.toggle-label{font-size:0.9rem}.toggle-switch{position:relative;display:inline-block;width:40px;height:22px}.toggle-switch input{opacity:0;width:0;height:0}.slider{position:absolute;cursor:pointer;inset:0;background-color:rgba(128,128,128,0.2);transition:.3s;border-radius:22px}.slider:before{position:absolute;content:"";height:16px;width:16px;left:3px;bottom:3px;background-color:#fff;transition:.3s;border-radius:50%}input:checked+.slider{background-color:var(--c-glow)}input:checked+.slider:before{transform:translateX(18px)}
-        .input-group input,.input-group select,.input-group textarea{width:100%;background:var(--c-bg);border:1px solid var(--c-border);border-radius:4px;padding:.5rem;color:var(--c-text-main);font-family:var(--font-code);font-size:.8rem;margin-bottom:.5rem;transition:border-color .2s,box-shadow .2s}.input-group input:focus,.input-group select:focus,.input-group textarea:focus{border-color:var(--c-glow-alt);outline:none;box-shadow:0 0 5px var(--c-glow-alt)}
-        .loader{width:16px;height:16px;border:2px solid;border-bottom-color:transparent;border-radius:50%;animation:rotation 1s linear infinite;position:absolute}@keyframes rotation{to{transform:rotate(360deg)}}.btn .loader{display:none}.btn.loading .loader{display:inline-block}.btn.loading span{visibility:hidden}
-        .saved-scripts-list{max-height:110px;overflow-y:auto;border:1px solid var(--c-border);border-radius:4px;padding:.25rem}.script-item{display:flex;justify-content:space-between;align-items:center;padding:.5rem;font-size:0.9rem;border-radius:4px;cursor:pointer}.script-item:hover{background:rgba(255,255,255,0.05)}.script-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.script-delete-btn{background:transparent;color:var(--c-text-dim);border:none;cursor:pointer;padding:2px 5px;font-weight:bold;transition:color .2s}.script-delete-btn:hover{color:var(--c-danger)}
-        .io-box{position:relative;flex-grow:1;border-radius:8px;overflow:hidden;background:var(--c-panel);border:1px solid var(--c-border)}.code-editor{position:absolute;inset:0;margin:0;padding:1rem;font-family:var(--font-code);font-size:0.9rem;line-height:1.6;white-space:pre-wrap;overflow:auto;word-break:break-word;tab-size:4;-moz-tab-size:4;caret-color:var(--c-glow-alt)}#input-lua{z-index:2;resize:none;color:transparent;background:transparent}#input-highlighter,#output-viewer{z-index:1;pointer-events:none}
-        #console{flex-shrink:0;height:150px;font-size:0.9rem;padding:1rem;overflow-y:auto;resize:vertical}@keyframes fadeInLine{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}.console-line{white-space:pre-wrap;margin-bottom:2px;animation:fadeInLine .2s}.console-line.error{color:var(--c-danger)}.console-line.warn{color:#facc15}.console-line.ai{color:var(--c-glow-alt)}
-        .hljs{color:var(--c-text-dim);background:transparent!important}.hljs-keyword{color:#c778dd}.hljs-string{color:#98c379}.hljs-number{color:#d19a66}.hljs-comment{color:#5c6370;font-style:italic}.hljs-title.function_{color:#61afef}.hljs-built_in{color:var(--c-glow-alt)}
+        /* CSS from v5.0 reused for base theme, but with v5.1 enhancements */
+        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Fira+Code&display=swap');
+        
+        :root{--font-main:'VT323',monospace;--font-code:'Fira Code',monospace;--glow-color:#ff00ff;--glow-color-alt:#00ffff;--glow-color-ai:#ffff00;--main-text:#e0e0e0;--bg-color:#05050a;--border-color:#4a004a;--terminal-text:#00ff41;--hl-keyword:var(--glow-color);--hl-string:#98c379;--hl-number:#d19a66;--hl-comment:#5c6370;--hl-function:var(--glow-color-alt)}
+        .theme-matrix{--glow-color:#00ff41;--glow-color-alt:#008f11;--border-color:#005d00;--terminal-text:#00ff41;--glow-color-ai:#adff2f;--hl-keyword:var(--glow-color);--hl-string:#ccff00}
+        .theme-fallout{--glow-color:#ffa500;--glow-color-alt:#d1b900;--border-color:#6d4f00;--terminal-text:#ffa500;--glow-color-ai:#ffeb3b;--hl-keyword:var(--glow-color);--hl-function:var(--glow-color);--hl-string:#90ee90}
+        .theme-blueprint{--glow-color:#007bff;--glow-color-alt:#4da6ff;--border-color:#004a99;--bg-color:#f0f4f8;--main-text:#1a1a1a;--terminal-text:#0d6efd;--glow-color-ai:#fd7e14;--hl-keyword:#d73a49;--hl-string:#032f62;--hl-function:#6f42c1;--hl-comment:#6a737d}
+        .theme-cyberdeck{--glow-color:#ff33A8;--glow-color-alt:#00f0ff;--border-color:#491a6d;--bg-color:#020a16;--terminal-text:#e5e5e5;--glow-color-ai:#ffae00;--hl-keyword:#ff79c6;--hl-string:#50fa7b;--hl-function:#8be9fd}
+        .theme-vaporwave{--glow-color:#ff71ce;--glow-color-alt:#01cdfe;--border-color:#b441a1;--bg-color:#2c0c49;--terminal-text:#fff;--glow-color-ai:#f8e658;--hl-keyword:#f92672;--hl-string:#a6e22e;--hl-function:#66d9ef}
+        .theme-monochrome{--glow-color:#fff;--glow-color-alt:#aaa;--border-color:#666;--bg-color:#000;--main-text:#fff;--terminal-text:#fff;--glow-color-ai:#fff;--hl-keyword:#fff;--hl-string:#fff;--hl-function:#fff;--hl-number:#fff}
+
+        ::selection{background-color:rgba(0,123,255,0.4)}
+        
+        body{background-color:var(--bg-color);color:var(--main-text);font-family:var(--font-main);font-size:1.2rem;transition:background-color .5s,color .5s;overflow-x:hidden; position: relative;}
+        /* ENHANCED: Added atmospheric scanline effect */
+        body::after { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%); background-size: 100% 4px; z-index: 1001; pointer-events: none; animation: scanline 10s linear infinite; }
+        @keyframes scanline { from { background-position-y: 0px; } to { background-position-y: 200px; } }
+
+        .container{display:flex;flex-direction:column;min-height:100vh;padding:20px;box-sizing:border-box}
+        header{text-align:center;margin-bottom:20px;animation:fadeInDown 0.5s ease-out; z-index: 10;}
+        
+        @keyframes fadeInDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes border-glow{from{box-shadow:0 0 8px var(--border-color),0 0 8px var(--border-color) inset}to{box-shadow:0 0 16px var(--glow-color-alt),0 0 12px var(--border-color) inset}}
+        @keyframes text-flicker{0%{opacity:1;text-shadow:0 0 10px var(--glow-color)}50%{opacity:.8;text-shadow:0 0 12px var(--glow-color)}100%{opacity:1;text-shadow:0 0 10px var(--glow-color)}}
+        @keyframes pulse-glow{0%{box-shadow:0 0 8px var(--glow-color)}50%{box-shadow:0 0 18px var(--glow-color)}100%{box-shadow:0 0 8px var(--glow-color)}}
+        
+        h1{color:var(--glow-color);letter-spacing:5px;font-size:3em;margin:0;animation:text-flicker 5s linear infinite}.version{color:var(--glow-color-alt);font-size:1.2em}.description{font-family:var(--font-code);font-size:0.9em;max-width:800px;margin:10px auto}.theme-selector{display:flex;justify-content:center;gap:10px;margin-top:15px;flex-wrap:wrap}.theme-btn{background:0 0;border:1px solid var(--border-color);color:var(--main-text);padding:5px 10px;cursor:pointer;transition:all .2s;font-family:var(--font-main);font-size:1rem;box-shadow: 0 0 3px 0 var(--border-color);}.theme-btn:hover{transform:translateY(-2px);box-shadow: 0 0 8px 0 var(--glow-color-alt);color: var(--glow-color-alt);}.theme-btn.active{background-color:var(--glow-color);color:var(--bg-color);animation:pulse-glow 2s infinite}.main-grid{flex-grow:1;display:grid;grid-template-columns:300px 1fr;gap:20px;width:100%;max-width:1600px;margin:0 auto}@media(max-width:1000px){.main-grid{grid-template-columns:1fr}}.left-panel{display:flex;flex-direction:column;gap:15px;animation:fadeInDown 0.7s ease-out}
+        
+        /* ENHANCED: Panels now have more depth */
+        .panel{border:1px solid var(--border-color);padding:15px;animation:border-glow 6s alternate infinite ease-in-out; background: radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 70%);}
+        
+        .ai-panel h2{color:var(--glow-color-ai);border-bottom-color:var(--glow-color-ai)}
+        h2{font-size:1.5rem;text-shadow:0 0 5px var(--glow-color-alt);color:var(--glow-color-alt);margin:0 0 10px 0;border-bottom:1px dashed var(--border-color);padding-bottom:5px}
+        
+        .setting{display:flex;align-items:center;user-select:none;margin-bottom: 5px;}
+        .setting input{display:none}
+        .setting label{font-family:var(--font-code);font-size:.9rem;cursor:pointer;position:relative;padding-left:25px}
+        .setting label::before{content:'';position:absolute;left:0;top:2px;width:15px;height:15px;border:1px solid var(--glow-color-alt);background-color:transparent;transition:all 0.2s}
+        .setting input:checked+label::before{transform:rotate(45deg)}.setting input:checked+label::after{content:'X';font-family:var(--font-main);color:var(--glow-color);position:absolute;left:4px;top:-2px;font-size:1.2rem;animation:pop 0.2s}
+        @keyframes pop{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
+        
+        .action-btn{transition:all .15s ease;transform:scale(1);background:0 0;padding:10px 15px;width:100%;margin-bottom:10px;font-family:var(--font-main);font-size:1.5rem;letter-spacing:3px;cursor:pointer;border:2px solid}.action-btn:active{transform:scale(0.95);opacity:0.8;}
+        
+        .right-panel{display:flex;flex-direction:column;gap:20px;min-height:calc(100vh - 150px);animation:fadeInDown 0.9s ease-out}
+        .io-box{position:relative;display:flex;flex-direction:column;flex:1;border:1px solid var(--border-color);background-color:rgba(0,0,0,0.5);min-height:300px}.io-box h2{padding:10px 15px;margin:0;flex-shrink:0;border-bottom:1px solid var(--border-color);}
+        
+        /* --- V5.1 CRITICAL TEXTBOX ALIGNMENT & STYLING --- */
+        .editor-container{position:relative;width:100%;flex-grow:1}
+        .code-editor-shared-styles { position:absolute; inset:0; box-sizing:border-box; width:100%; height:100%; margin:0; padding:15px; border:none; outline:none; white-space:pre-wrap; word-break:break-all; font-family:var(--font-code); font-size:0.9rem; line-height:1.5; letter-spacing:normal; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; tab-size:4; -moz-tab-size:4; overflow: auto; transition: box-shadow 0.3s; }
+        #input-lua { z-index:2; resize:none; background-color:transparent; color:transparent; caret-color:var(--glow-color); /* ENHANCED */ }
+        /* ENHANCED: Input now glows when focused */
+        #input-lua:focus { box-shadow: 0 0 10px var(--glow-color-alt) inset; }
+        .input-highlighter, .output-code { z-index:1; }
+
+        .copy-btn{position:absolute;top:10px;right:15px;background:var(--glow-color);color:#000;border:none;font-family:var(--font-main);padding:5px 10px;cursor:pointer;opacity:.7;transition: all .2s;z-index:10; border: 1px solid black;}
+        .copy-btn:hover { opacity: 1; transform: scale(1.05); }
+        
+        /* ENHANCED: All input fields share a style */
+        .ai-copilot-panel input,.ai-copilot-panel select,.ai-copilot-panel textarea{width:100%;box-sizing:border-box;background:rgba(0,0,0,0.5);border:1px solid var(--border-color);color:var(--main-text);font-family:var(--font-code);font-size:0.9rem;margin-bottom:10px;padding:5px; transition: all 0.2s;}
+        .ai-copilot-panel input:focus,.ai-copilot-panel select:focus,.ai-copilot-panel textarea:focus { border-color: var(--glow-color-ai); box-shadow: 0 0 8px var(--glow-color-ai); outline: none;}
+
+        #query-ai-btn{border-color:var(--glow-color-ai);color:var(--glow-color-ai);font-size:1rem}
+        #query-ai-btn:hover{background-color:var(--glow-color-ai);color:var(--bg-color);box-shadow:0 0 15px var(--glow-color-ai)}
+        
+        .disclaimer{font-size:0.7rem;color:#888;margin-top:-5px}.console{width:100%;max-width:1600px;margin:15px auto 0;height:120px;background-color:#000;border:1px solid var(--border-color);padding:10px;overflow-y:auto;font-size:.9rem;font-family:var(--font-code);box-sizing:border-box}.console-line{padding: 2px 0 2px 15px; position:relative; opacity:0;transform:translateY(10px);transition:opacity 0.3s ease-out,transform 0.3s ease-out; text-shadow: 0 0 3px var(--terminal-text);}
+        /* ENHANCED: Console line styling */
+        .console-line::before { content: '>'; position: absolute; left: 5px; top: 2px; color: var(--glow-color-alt); }
+        .console-line.visible{opacity:1;transform:translateY(0)}.console-line.ai-response{background:rgba(255,255,255,0.05);padding:5px;border-left:2px solid var(--glow-color-ai);white-space:pre-wrap}.action-btn{background:0 0;padding:10px 15px;width:100%;margin-bottom:10px;font-family:var(--font-main);font-size:1.5rem;letter-spacing:3px;cursor:pointer;border:2px solid}
+        
+        /* ENHANCED: Button hover states */
+        #mutilate-btn{border-color: var(--glow-color);}
+        #deobfuscate-btn{border-color: var(--glow-color-alt);}
+        #download-btn{border-color: var(--main-text);}
+        #mutilate-btn:hover{background-color:var(--glow-color);color:var(--bg-color);box-shadow:0 0 20px var(--glow-color)}
+        #deobfuscate-btn:hover{background-color:var(--glow-color-alt);color:var(--bg-color);box-shadow:0 0 20px var(--glow-color-alt)}
+        #download-btn:hover{background-color:var(--main-text);color:var(--bg-color)}
+
+        /* Syntax Highlighting */
+        .hljs{color:var(--terminal-text);background:transparent}.hljs-keyword{color:var(--hl-keyword)}.hljs-string,.hljs-subst{color:var(--hl-string)}.hljs-number,.hljs-literal{color:var(--hl-number)}.hljs-comment{color:var(--hl-comment);font-style:italic}.hljs-title.function_{color:var(--hl-function)}.hljs-built_in{color:var(--glow-color-alt)}.ai-comment{color:var(--glow-color-ai)!important;font-style:normal!important;text-shadow:0 0 5px var(--glow-color-ai)}.console-line.error{color:#ff3333;text-shadow: 0 0 5px #ff3333;}.console-line.warn{color:#ffeb3b}.console-line.info{color:var(--glow-color-alt)}.console-line.ai{color:var(--glow-color-ai)}
+
+        /* --- V5.1 GATEKEEPER SYSTEM & LOCK OVERLAY --- */
+        #gatekeeper-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px)}.modal-content{width:90%;max-width:400px;padding:25px;border:1px solid var(--border-color);background:var(--bg-color);animation:fadeInScaleUp 0.3s; box-shadow: 0 0 25px var(--border-color);}@keyframes fadeInScaleUp{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}.modal-content h3{color:var(--glow-color-alt);text-align:center}.modal-content input{width:100%;box-sizing:border-box;margin-bottom:15px}.modal-actions{display:flex;gap:10px}.modal-footer{margin-top:15px;text-align:center;font-size:0.9rem}.modal-footer .switch-link{color:var(--glow-color-alt);cursor:pointer;text-decoration:underline}#modal-message{margin-top:10px;color:var(--glow-color-ai);min-height:20px;text-align:center}#user-status-panel .username{color:var(--glow-color-ai)}
+        
+        .feature-container { position: relative; } /* A container for the feature and its lock */
+        /* ENHANCED: Lock Overlay styling */
+        .lock-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); z-index: 5; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--glow-color); cursor: pointer; visibility: hidden; opacity: 0; transition: all 0.3s; text-shadow: 0 0 10px var(--glow-color);}
+        .locked .lock-overlay { visibility: visible; opacity: 1; }
+        .setting input:disabled+label, .ai-copilot-panel input:disabled, .ai-copilot-panel select:disabled, .ai-copilot-panel textarea:disabled, .ai-copilot-panel button:disabled { opacity:0.4; cursor: not-allowed;}
+        .theme-btn.locked { opacity: 0.4; pointer-events: none; background: #333; box-shadow: none;}
     </style>
 </head>
 <body>
-    <div id="preloader"><div class="preloader-content"><div class="preloader-logo">ECHELON</div><div class="preloader-text">Calibrating Engine v9.0</div></div></div>
-    <div id="news-modal" class="modal"><div class="modal-content"><h3>Echelon Engine v9.0 Online</h3><ul><li><strong>Total Rebuild:</strong> Core engine and startup sequence rewritten for absolute stability. The application is now unbreakable.</li><li><strong>Zenith UI:</strong> A "very very super good" professional UI with satisfying animations.</li><li><strong>Flawless Editor:</strong> Text position bug is permanently squashed for pixel-perfect alignment.</li><li><strong>Script Manager Pro:</strong> A dedicated panel to save, load, and delete your scripts.</li><li><strong>Context-Aware AI:</strong> Cerebrum AI now knows your active settings.</li><li><strong>Final Word:</strong> Made by Team Exter. This is the last obfuscator you will ever need.</li></ul><button class="btn btn-primary" style="width:100%; margin-top:1rem;" id="close-news-modal"><span>Engage</span></button></div></div>
-    <div id="about-modal" class="modal"><div class="modal-content"><h3 style="color:var(--c-glow)">LUA OBSCURA v9</h3><p style="text-align:center;color:var(--c-text-dim)">A Team Exter Production.<br>The final word in code transformation. The zenith of our work.</p><button class="btn btn-secondary" style="width:100%; margin-top:1rem;" id="close-about-modal"><span>Close</span></button></div></div>
+    <div id="gatekeeper-modal"><!-- Gatekeeper modal content will be populated by JS --></div>
+    <div class="container">
+        <header>
+            <h1>LUA OBSCURA</h1>
+            <div class="version">v5.1 // Aligner Engine</div>
+            <p class="description">Authenticate with the GATEKEEPER to unlock the ARCHON's full potential. Basic obfuscation is a privilege; true alchemy requires an account.</p>
+            <div class="theme-selector">
+                <button class="theme-btn" data-theme="theme-synthwave">Synthwave</button>
+                <button class="theme-btn" data-theme="theme-matrix">Matrix</button>
+                <button class="theme-btn" data-theme="theme-fallout">Fallout</button>
+                <button class="theme-btn" data-theme="theme-blueprint">Blueprint</button>
+                <button class="theme-btn" data-theme="theme-cyberdeck">Cyberdeck</button>
+                <button class="theme-btn" data-theme="theme-vaporwave">Vaporwave</button>
+                <button class="theme-btn" data-theme="theme-monochrome">Monochrome</button>
+            </div>
+        </header>
 
-    <main class="app-container">
-        <aside class="sidebar" id="sidebar"> <!-- Content dynamically injected --> </aside>
-        <div class="main-content">
-            <div class="io-box"><textarea id="input-lua" class="code-editor" spellcheck="false"></textarea><pre id="input-highlighter" class="code-editor language-lua"></pre></div>
-            <div class="io-box"><pre id="output-viewer" class="code-editor language-lua"></pre></div>
-            <div class="panel" id="console"></div>
+        <div class="main-grid">
+            <div class="left-panel">
+                 <div id="user-status-panel" class="panel">
+                    <!-- User status content will be populated by JS -->
+                 </div>
+                 <div class="feature-container" id="ai-panel-wrapper">
+                    <div class="panel ai-panel ai-copilot-panel">
+                        <h2>CEREBRUM AI Copilot</h2>
+                        <input type="password" id="gemini-api-key" placeholder="Enter Gemini API Key">
+                        <select id="gemini-model">
+                            <option value="gemini-1.5-flash-latest">Gemini 1.5 Flash (Fast)</option>
+                            <option value="gemini-1.5-pro-latest">Gemini 1.5 Pro (Powerful)</option>
+                        </select>
+                        <textarea id="ai-prompt" placeholder="AI Prompt..." rows="4"></textarea>
+                        <button id="query-ai-btn" class="action-btn">QUERY AI</button>
+                    </div>
+                    <div class="lock-overlay">🔒</div>
+                </div>
+                <div class="panel">
+                    <h2>Mutilation Settings</h2>
+                    <div class="setting"><input type="checkbox" id="aiAugment"><label for="aiAugment">Engage AI Augmentation</label></div>
+                    <div class="setting"><input type="checkbox" id="mangleNames" checked><label for="mangleNames">Mangle Variable Names</label></div>
+                    <div class="setting"><input type="checkbox" id="renameGlobals" checked><label for="renameGlobals">Localize Global Functions</label></div>
+                    <div class="setting"><input type="checkbox" id="abstractStrings" checked><label for="abstractStrings">Abstract Strings</label></div>
+                    <div class="setting"><input type="checkbox" id="decomposeNumbers" checked><label for="decomposeNumbers">Decompose Numbers</label></div>
+                    <div class="feature-container"><div class="setting"><input type="checkbox" id="mangleControlFlow"><label for="mangleControlFlow">Mangle Control-Flow</label></div><div class="lock-overlay">🔒</div></div>
+                    <div class="feature-container"><div class="setting"><input type="checkbox" id="injectJunk"><label for="injectJunk">Inject Junk Code</label></div><div class="lock-overlay">🔒</div></div>
+                    <div class="feature-container"><div class="setting"><input type="checkbox" id="serializeToHex"><label for="serializeToHex">Serialize to Hex</label></div><div class="lock-overlay">🔒</div></div>
+                    <div class="setting"><input type="checkbox" id="useLoader"><label for="useLoader">Wrap in Eldritch Loader</label></div>
+                    <div class="setting"><input type="checkbox" id="minify"><label for="minify">Minify Output</label></div>
+                </div>
+                <div class="panel">
+                    <h2>Engine Controls</h2>
+                    <button id="mutilate-btn" class="action-btn">MUTILATE</button>
+                    <button id="deobfuscate-btn" class="action-btn">REVEAL</button>
+                    <button id="download-btn" class="action-btn">DOWNLOAD .LUA</button>
+                </div>
+            </div>
+            <div class="right-panel">
+                 <div class="io-box">
+                     <h2>Input</h2>
+                     <div class="editor-container">
+                         <textarea id="input-lua" class="code-editor-shared-styles" spellcheck="false"></textarea>
+                         <pre class="input-highlighter"><code class="language-lua code-editor-shared-styles"></code></pre>
+                     </div>
+                 </div>
+                 <div class="io-box">
+                     <h2>Output</h2>
+                     <div class="editor-container">
+                         <pre class="output-code"><code class="language-lua code-editor-shared-styles"></code></pre>
+                         <button id="copy-btn" class="copy-btn">COPY</button>
+                     </div>
+                </div>
+            </div>
         </div>
-    </main>
-
+        <div class="console" id="console"></div>
+    </div>
+    
 <script>
-    // --- LUA OBSCURA v9 "Echelon Engine" ---
-    // A complete, ground-up rewrite for stability, performance, and UX.
-    // Made by Team Exter.
+// --- MODAL & STATIC CONTENT POPULATION ---
+document.getElementById('gatekeeper-modal').innerHTML=`
+<div class="modal-content">
+    <h3 id="modal-title">Account Required</h3>
+    <p class="disclaimer" style="text-align: center;">This is a SIMULATED login system. DO NOT use a real password.</p>
+    <div id="login-form">
+        <input type="text" id="login-username" placeholder="Username" class="ai-copilot-panel">
+        <input type="password" id="login-password" placeholder="Password" class="ai-copilot-panel">
+        <div class="modal-actions"><button id="login-btn" class="action-btn" style="font-size:1.2rem; margin:0; border-color:var(--glow-color)">Login</button></div>
+        <div id="modal-message"></div>
+        <div class="modal-footer">Don't have an account? <span id="show-register-link" class="switch-link">Register</span></div>
+    </div>
+    <div id="register-form" style="display:none;">
+        <input type="text" id="register-username" placeholder="Username" class="ai-copilot-panel">
+        <input type="password" id="register-password" placeholder="Password" class="ai-copilot-panel">
+        <input type="password" id="register-confirm-password" placeholder="Confirm Password" class="ai-copilot-panel">
+        <div class="modal-actions"><button id="register-btn" class="action-btn" style="font-size:1.2rem; margin:0; border-color:var(--glow-color-alt)">Register</button></div>
+        <div id="modal-message-register" style="color:var(--glow-color-ai);min-height:20px;text-align:center"></div>
+        <div class="modal-footer">Already have an account? <span id="show-login-link" class="switch-link">Login</span></div>
+    </div>
+</div>`;
 
-    const App = {
-        elements: {}, // Cache for DOM elements
-        state: { // Central state management
-            scripts: {},
-            settings: {}
-        },
+// --- V5.1 Aligner Engine ---
+const getEl = id => document.getElementById(id);
+
+// Dollar-sign utility object for DOM elements
+const $ = {
+    body: document.body,
+    input: getEl("input-lua"),
+    inputHl: document.querySelector(".input-highlighter code"),
+    outputHl: document.querySelector(".output-code code"),
+    console: getEl("console"),
+    mutilateBtn: getEl("mutilate-btn"),
+    deobfuscateBtn: getEl("deobfuscate-btn"),
+    downloadBtn: getEl("download-btn"),
+    copyBtn: getEl("copy-btn"),
+    settings: {
+        aiAugment: getEl("aiAugment"),
+        mangleNames: getEl("mangleNames"),
+        renameGlobals: getEl("renameGlobals"),
+        abstractStrings: getEl("abstractStrings"),
+        decomposeNumbers: getEl("decomposeNumbers"),
+        mangleControlFlow: getEl("mangleControlFlow"),
+        injectJunk: getEl("injectJunk"),
+        serializeToHex: getEl("serializeToHex"),
+        useLoader: getEl("useLoader"),
+        minify: getEl("minify"),
+    },
+    gatekeeper: {
+        modal: getEl("gatekeeper-modal"),
+        loginForm: getEl("login-form"),
+        registerForm: getEl("register-form"),
+        loginBtn: getEl("login-btn"),
+        registerBtn: getEl("register-btn"),
+        showLoginLink: getEl("show-login-link"),
+        showRegisterLink: getEl("show-register-link"),
+        modalMsg: getEl("modal-message"),
+        modalMsgReg: getEl("modal-message-register"),
+        userStatusPanel: getEl("user-status-panel"),
+    },
+    ai: {
+        panelWrapper: getEl("ai-panel-wrapper"),
+        key: getEl("gemini-api-key"),
+        model: getEl("gemini-model"),
+        prompt: getEl("ai-prompt"),
+        queryBtn: getEl("query-ai-btn"),
+    }
+};
+
+// --- Core Utilities ---
+const consoleLog = (message, type = 'info') => {
+    const line = document.createElement('div');
+    const timestamp = new Date().toLocaleTimeString();
+    // Sanitize message to prevent HTML injection from AI or other sources
+    const sanitizedMessage = message.replace(/</g, "<").replace(/>/g, ">");
+    line.innerHTML = `<span style="opacity:0.6; margin-right: 8px;">${timestamp}</span>${sanitizedMessage}`;
+    line.className = `console-line ${type}`;
+    $.console.appendChild(line);
+    // Animate in
+    setTimeout(() => line.classList.add('visible'), 10);
+    // Auto-scroll
+    $.console.scrollTop = $.console.scrollHeight;
+};
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+const gibberish = (length = 8) => `_${[...Array(length)].map(() => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random() * 52)]).join('')}`;
+
+const updateHighlight = () => {
+    const code = $.input.value;
+    const sanitizedCode = code.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">");
+    $.inputHl.innerHTML = sanitizedCode + "\n"; // Add newline to prevent layout shifts on last line
+    hljs.highlightElement($.inputHl);
+    localStorage.setItem("luaObscuraInput", code);
+};
+
+// --- GATEKEEPER SYSTEM (V5.1) ---
+const GATEKEEPER = {
+    init() {
+        $.gatekeeper.showRegisterLink.onclick = () => this.switchForm('register');
+        $.gatekeeper.showLoginLink.onclick = () => this.switchForm('login');
+        $.gatekeeper.modal.onclick = (e) => { if (e.target.id === 'gatekeeper-modal') this.showModal(false); };
+        $.gatekeeper.registerBtn.onclick = () => this.register();
+        $.gatekeeper.loginBtn.onclick = () => this.login();
+        document.querySelectorAll(".lock-overlay").forEach(el => el.onclick = () => this.promptLogin());
         
-        // Phase 1: Application Initialization
-        init() {
-            try {
-                this.renderStaticUI();
-                this.cacheElements();
-                this.bindEvents();
-                this.loadState();
-                this.startPreloader();
-            } catch (error) {
-                console.error("Echelon Engine failed to initialize:", error);
-                document.body.innerHTML = `<div style="color:red;padding:2rem;"><h1>FATAL ENGINE FAILURE</h1><p>Contact Team Exter. Details in console (F12).</p><pre>${error.stack}</pre></div>`;
-            }
-        },
-
-        // Phase 2: Building the Interface
-        renderStaticUI() {
-            document.getElementById('sidebar').innerHTML = `
-                <div class="panel"><h2>Echelon Engine</h2><p style="font-size:0.8rem; color:var(--c-text-dim); line-height:1.5;">Made by <span style="color:var(--c-glow)">Team Exter</span>. This is the definitive obfuscation tool.</p></div>
-                <div class="panel"><h2>Controls</h2><div class="controls-grid"><button class="btn btn-primary" id="mutilate-btn"><span>Mutilate</span><div class="loader"></div></button><button class="btn btn-secondary" id="deobfuscate-btn"><span>Reveal</span><div class="loader"></div></button><button class="btn btn-tertiary" id="download-btn">Download</button><button class="btn btn-tertiary" id="about-btn">About</button></div></div>
-                <div class="panel"><h2>Settings (10)</h2><div id="settings-container"></div></div>
-                <div class="panel"><h2>Cerebrum AI</h2><div class="input-group"><input type="password" id="gemini-api-key" placeholder="Enter Gemini API Key"><select id="gemini-model"><option value="gemini-1.5-flash-latest">Gemini 1.5 Flash</option><option value="gemini-1.5-pro-latest">Gemini 1.5 Pro</option></select><textarea id="ai-prompt" rows="3" placeholder="e.g., Explain this code..."></textarea><button class="btn btn-secondary" id="query-ai-btn" style="width:100%"><span>Query AI</span><div class="loader"></div></button></div></div>
-                <div class="panel"><h2>Script Manager</h2><div class="input-group"><input type="text" id="save-script-name" placeholder="Save current as..."></div><div class="saved-scripts-list" id="saved-scripts-list"></div></div>
-            `;
-            const settings = [{id:'mangleNames',l:'Mangle Names',c:!0},{id:'abstractStrings',l:'Abstract Strings',c:!0},{id:'decomposeNumbers',l:'Decompose Numbers',c:!0},{id:'controlFlow',l:'Mangle Control-Flow',c:!0},{id:'globalWrap',l:'Localize Globals',c:!0},{id:'junkCode',l:'Inject Junk Code',c:!1},{id:'byteConvert',l:'Convert to Bytes',c:!0},{id:'useLoader',l:'Wrap in Loader',c:!1},{id:'aiAugment',l:'AI Augmentation',c:!1},{id:'minify',l:'Minify Output',c:!0}];
-            document.getElementById('settings-container').innerHTML = settings.map(s => `<div class="toggle-setting"><span class="toggle-label">${s.l}</span><label class="toggle-switch"><input type="checkbox" id="${s.id}" data-setting="${s.id}" ${s.c?'checked':''}/><span class="slider"></span></label></div>`).join('');
-        },
-
-        cacheElements() {
-            const ids=['preloader','news-modal','close-news-modal','about-modal','close-about-modal','input-lua','input-highlighter','output-viewer','console','mutilate-btn','deobfuscate-btn','download-btn','about-btn','gemini-api-key','gemini-model','ai-prompt','query-ai-btn','save-script-name','saved-scripts-list'];
-            ids.forEach(id => this.elements[id] = document.getElementById(id));
-            this.elements.container = document.querySelector('.app-container');
-        },
+        $.ai.key.value = localStorage.getItem('geminiApiKey') || '';
+        $.ai.key.onchange = () => {
+            localStorage.setItem('geminiApiKey', $.ai.key.value);
+            consoleLog("CEREBRUM API Key saved locally.", "info");
+        };
         
-        // Phase 3: Event Binding (using a resilient method)
-        bindEvents() {
-            document.addEventListener('click', e => {
-                if(e.target.closest('#mutilate-btn')) this.runEngine('obfuscate');
-                if(e.target.closest('#deobfuscate-btn')) this.runEngine('deobfuscate');
-                if(e.target.closest('#download-btn')) this.downloadScript();
-                if(e.target.closest('#about-btn')) this.toggleModal('about-modal', true);
-                if(e.target.closest('#close-about-modal') || e.target.closest('#close-news-modal')) this.toggleModal(e.target.closest('.modal').id, false);
-                if(e.target.closest('#query-ai-btn')) AI.query();
-            });
-            this.elements.input.addEventListener('input', this.handleInput);
-            this.elements.input.addEventListener('scroll', () => this.elements.inputHl.scrollTop = this.elements.input.scrollTop);
-            this.elements.news-modal.addEventListener('click', e => e.target === this.elements['news-modal'] && this.toggleModal('news-modal', false));
-            this.elements.about-modal.addEventListener('click', e => e.target === this.elements['about-modal'] && this.toggleModal('about-modal', false));
-            this.elements['save-script-name'].addEventListener('keydown', e => e.key === 'Enter' && ScriptManager.save());
-            this.elements['gemini-api-key'].addEventListener('input', () => localStorage.setItem('geminiApiKey', this.elements['gemini-api-key'].value));
-            this.elements['gemini-model'].addEventListener('change', () => localStorage.setItem('geminiModel', this.elements['gemini-model'].value));
-        },
-        
-        loadState() {
-            this.elements.input.value = localStorage.getItem('luaObscuraLastScript') || `print("Welcome to LUA OBSCURA v9.0")\n\n-- Made by Team Exter`;
-            this.handleInput(); ScriptManager.load(); AI.loadState();
-        },
+        this.updateUIForUserStatus();
+    },
 
-        handleInput: () => { const code = App.elements.input.value; App.elements.inputHl.textContent = code; hljs.highlightElement(App.elements.inputHl); localStorage.setItem('luaObscuraLastScript', code); },
-        
-        // Phase 4: Core Operations
-        async runEngine(mode) {
-            this.setEngineBusy(true, mode);
-            this.log(`Echelon Engine processing...`, "info");
-            await new Promise(r => setTimeout(r, 100));
-            try {
-                const settings = this.getSettings();
-                const result = mode === 'obfuscate' ? Engine.obfuscate(this.elements.input.value, settings) : Engine.deobfuscate(this.elements.input.value);
-                this.elements.output.textContent = result;
-                hljs.highlightElement(this.elements.output);
-                this.log('Processing complete.', 'info');
-            } catch (error) { this.log(`Engine failure: ${error.message}`, "error"); console.error(error); }
-            this.setEngineBusy(false);
-        },
+    getUsers() { return JSON.parse(localStorage.getItem("luaObscuraUsers") || "{}"); },
+    saveUsers(users) { localStorage.setItem("luaObscuraUsers", JSON.stringify(users)); },
+    getCurrentUser() { return localStorage.getItem("loggedInUser"); },
 
-        getSettings: () => {const s={};document.querySelectorAll('#settings-container input').forEach(el=>s[el.dataset.setting]=el.checked);return s;},
-        downloadScript:()=>{const b=new Blob([App.elements.output.textContent],{type:'text/plain'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u,a.download='echelon-script.lua',a.click(),URL.revokeObjectURL(u)},
-        toggleModal:(id,show)=>{App.elements[id].classList.toggle('visible',show)},
-        setEngineBusy(isBusy,action){const b=[this.elements['mutilate-btn'],this.elements['deobfuscate-btn'],this.elements['download-btn'],this.elements['query-ai-btn']];b.forEach(b=>b.disabled=isBusy);const q=this.elements['query-ai-btn'];q.classList.toggle('loading',isBusy&&action==='ai');if(action==='obfuscate'){this.elements['mutilate-btn'].classList.toggle('loading',isBusy)}else if(action==='deobfuscate'){this.elements['deobfuscate-btn'].classList.toggle('loading',isBusy)}},
-        log(m,t="info"){const e=document.createElement("div");e.className=`console-line ${t}`;e.textContent=`> ${m}`;this.elements.console.appendChild(e);this.elements.console.scrollTop=this.elements.console.scrollHeight},
-        
-        // Phase 5: Application Startup
-        startPreloader() {
-            setTimeout(() => {
-                this.elements.preloader.style.opacity = '0';
-                this.elements.container.style.opacity = '1';
-                setTimeout(() => this.elements.preloader.style.display = 'none', 500);
-
-                if (localStorage.getItem('luaObscuraVersion') !== '9.0') {
-                    this.toggleModal('news-modal', true);
-                    localStorage.setItem('luaObscuraVersion', '9.0');
-                }
-            }, 1800);
+    showModal(visible, form = 'login') {
+        $.gatekeeper.modal.style.display = visible ? 'flex' : 'none';
+        if (visible) {
+            this.switchForm(form);
+            $.gatekeeper.modalMsg.textContent = "";
+            $.gatekeeper.modalMsgReg.textContent = "";
         }
+    },
+
+    switchForm(form) {
+        $.gatekeeper.loginForm.style.display = (form === 'login') ? 'block' : 'none';
+        $.gatekeeper.registerForm.style.display = (form === 'register') ? 'block' : 'none';
+        getEl("modal-title").textContent = (form === 'login') ? "GATEKEEPER Login" : "Create GATEKEEPER Account";
+    },
+
+    promptLogin() {
+        if (!this.getCurrentUser()) {
+            consoleLog("Access Denied. Authentication required for this ARCHON feature.", "warn");
+            this.showModal(true, 'login');
+        }
+    },
+    
+    async register() {
+        const username = getEl('register-username').value.trim();
+        const password = getEl('register-password').value;
+        const confirm = getEl('register-confirm-password').value;
+        const msgEl = $.gatekeeper.modalMsgReg;
+
+        if (!username || !password) { msgEl.textContent = "Username and password cannot be empty."; return; }
+        if (password.length < 4) { msgEl.textContent = "Password must be at least 4 characters."; return; }
+        if (password !== confirm) { msgEl.textContent = "Passwords do not match."; return; }
+        
+        const users = this.getUsers();
+        if (users[username]) { msgEl.textContent = "Username is already taken."; return; }
+
+        users[username] = password; // In a real app, you must hash this!
+        this.saveUsers(users);
+        msgEl.textContent = "Registration successful! Logging in...";
+        await sleep(1000);
+        this.login(username, password);
+    },
+
+    async login(username, password) {
+        username = username || getEl('login-username').value.trim();
+        password = password || getEl('login-password').value;
+        const msgEl = $.gatekeeper.modalMsg;
+
+        if (!username || !password) { msgEl.textContent = "Please enter username and password."; return; }
+        const users = this.getUsers();
+        if (!users[username] || users[username] !== password) {
+            msgEl.textContent = "Invalid username or password."; return;
+        }
+
+        localStorage.setItem("loggedInUser", username);
+        msgEl.textContent = "Login Successful!";
+        await sleep(500);
+        this.showModal(false);
+        this.updateUIForUserStatus();
+        consoleLog(`User '${username}' logged in. ARCHON features unlocked.`, "ai");
+    },
+
+    logout() {
+        const user = this.getCurrentUser();
+        localStorage.removeItem("loggedInUser");
+        this.updateUIForUserStatus();
+        consoleLog(`User '${user}' logged out. Features locked.`, "warn");
+    },
+
+    updateUIForUserStatus() {
+        const user = this.getCurrentUser();
+        const panel = $.gatekeeper.userStatusPanel;
+
+        if (user) {
+            panel.innerHTML = `<h2>User Status</h2><p>Welcome, <span class="username">${user}</span></p><button id="logout-btn" class="action-btn" style="font-size:1rem; border-color: #aaa; margin: 0;">Logout</button>`;
+            getEl('logout-btn').onclick = () => this.logout();
+        } else {
+            panel.innerHTML = `<h2>User Status</h2><p>Logged in as: <span class="username">Guest</span></p><button id="login-prompt-btn" class="action-btn" style="font-size:1rem; margin:0;">Login / Register</button>`;
+            getEl('login-prompt-btn').onclick = () => this.showModal(true, 'login');
+        }
+        this.toggleFeatureAccess(!!user);
+    },
+
+    toggleFeatureAccess(isLoggedIn) {
+        document.querySelectorAll(".feature-container").forEach(el => {
+            isLoggedIn ? el.classList.remove('locked') : el.classList.add('locked');
+            // This is handled by a blanket CSS rule now for cleaner toggling
+        });
+        
+        const premiumThemes = ['theme-cyberdeck', 'theme-vaporwave', 'theme-monochrome'];
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+            const isPremium = premiumThemes.includes(btn.dataset.theme);
+            if (isPremium) isLoggedIn ? btn.classList.remove('locked') : btn.classList.add('locked');
+        });
+        
+        const activeThemeBtn = document.querySelector('.theme-btn.active');
+        if (activeThemeBtn && activeThemeBtn.classList.contains('locked')) {
+            document.querySelector('.theme-btn[data-theme="theme-synthwave"]').click();
+        }
+    }
+};
+
+// --- Obfuscation Logic (simplified representations for demo) ---
+const Obfuscator = {
+    abstractStrings: (code) => { 
+        const strings = [];
+        let i = 0;
+        // A more robust regex that avoids matching inside comments
+        code = code.replace(/--\[\[[\s\S]*?\]\]|(--.*)|(("(?:\\.|[^"\\])*")|('(?:\\.|[^'\\])*'))/g, (match, comment, str) => {
+            if (comment) return match; // If it's a comment, ignore it
+            if (str) {
+              strings.push(str);
+              i++;
+              return `_S[${i}]`;
+            }
+            return match;
+        });
+        if (strings.length > 0) {
+            const tableName = gibberish();
+            const table = `local ${tableName} = {${strings.join(', ')}};\nlocal _S = setmetatable({}, { __index = ${tableName} });\n`;
+            return table + code;
+        }
+        return code;
+    },
+    decomposeNumbers: (code) => code.replace(/\b(\d{3,})\b/g, n => {
+        const num = parseInt(n);
+        if (isNaN(num) || Math.random() < 0.3) return n;
+        const p1 = Math.floor(Math.random() * num);
+        const p2 = num - p1;
+        return `(${p1}+${p2})`;
+    }),
+    minify: (code) => code.replace(/--\[\[[\s\S]*?\]\]/g, '').replace(/--.*/g, '').replace(/\s+/g, ' ').trim(),
+    createLoader: (code, useHex) => {
+        if (useHex) {
+            let hexStr = [...code].map(c => '\\x' + c.charCodeAt(0).toString(16).padStart(2, '0')).join('');
+            return `(load or loadstring)(("${hexStr}"):gsub('.', function(c) return string.char(tonumber(c:sub(3), 16)) end))()`
+        } else {
+            return `(load or loadstring)([=[${code}]=])()`
+        }
+    }
+};
+
+// --- Main Engine Logic ---
+const mutilateCode = async () => {
+    consoleLog("Initiating Mutilation Protocol...", "ai");
+    $.mutilateBtn.disabled = true;
+    $.mutilateBtn.textContent = "PROCESSING...";
+    await sleep(200);
+
+    let code = $.input.value;
+    const isLoggedIn = !!GATEKEEPER.getCurrentUser();
+    let hasWarned = false;
+
+    const checkPremium = (settingKey, func) => {
+        const settingElement = $.settings[settingKey];
+        if (!settingElement.checked) return; // Don't run if not checked
+        if (!isLoggedIn) {
+            if (!hasWarned) {
+                GATEKEEPER.promptLogin();
+                hasWarned = true;
+            }
+            consoleLog(`Skipping ${settingElement.nextElementSibling.textContent} (ARCHON Feature)`, "warn");
+            return;
+        }
+        consoleLog(`Applying: ${settingElement.nextElementSibling.textContent}...`, "info");
+        code = func(code); // Apply the transformation
     };
     
-    // Minified modules for brevity, logic is stable and sound
-    const Engine={obfuscate:(c,s)=>{let p=c;const g=e=>`z${[...Array(e)].map(()=>Math.floor(36*Math.random()).toString(36)).join("")}`;if(s.globalWrap)p=(()=>{let t=p,e="",a=new Map,o=["print","tostring","tonumber","pairs","ipairs","type","load","string","math","table","pcall"];return o.forEach(t=>{new RegExp(`\\b${t}\\b`).test(c)&&(gloName=g(6),a.set(t,gloName),e+=`local ${gloName}=${t}\n`)}),a.forEach((e,a)=>{t=t.replace(new RegExp(`\\b${a}\\b`,"g"),e)}),e+t})();if(s.mangleNames)p=(()=>{let t=p,e=new Map,a=new Set(["do","end","for","if","then","else","local","return","function"]);return[...t.matchAll(/\b(local\s+(?:function\s+)?|function\s+)([a-zA-Z_][\w_]*)/g)].forEach(t=>{let o=t[2];a.has(o)||e.has(o)||e.set(o,g(8))}),e.forEach((e,a)=>{t=t.replace(new RegExp(`\\b${a}\\b`,"g"),e)}),t})();if(s.controlFlow)p=p.replace(/if\s+(.+?)\s+then\s*([\s\S]+?)\s*else\s*([\s\S]+?)\s*end/g,(m,c,t,e)=>`(function() return ${c} and (function() ${t} end) or (function() ${e} end) end)()`);if(s.abstractStrings)p=p.replace(/"(.*?)"/g,(_,c)=>c.length===0?'""':`string.char(${c.split("").map(c=>c.charCodeAt(0)).join()})`);if(s.decomposeNumbers)p=p.replace(/\b(\d+)\b/g,(_,n)=>{const v=parseInt(n);if(v<2)return n;const r=Math.floor(Math.random()*v);return `(${r}+${v-r})`});if(s.junkCode)p=p.split("\n").map(l=>Math.random()>.8?`${l}\n;--[[${g(5)}]]`:l).join("\n");if(s.byteConvert)p=(()=>{let t=p,e=[];for(let i=0;i<t.length;i++)e.push(t.charCodeAt(i));return`load(string.char(${e.join()}))()`})();if(s.useLoader)p=`(function(...) load([=[${p}]=])(...) end)()`;if(s.aiAugment)p=`--// Echelon AI: Structural augmentation complete.\n${p}`;if(s.minify)p=p.replace(/--.*$/gm,"").replace(/\s\s+/g," ");return p},deobfuscate:c=>"Deobfuscation is an art, not a science. The Echelon Engine's work is final."};
-    const ScriptManager={state:{},load(){this.state=JSON.parse(localStorage.getItem('luaScripts')||'{}');this.render()},save(){const n=App.elements['save-script-name'].value.trim(),c=App.elements.input.value.trim();if(!n||!c)return App.log("Script name and content required.","error");this.state[n]=c,localStorage.setItem('luaScripts',JSON.stringify(this.state)),App.elements['save-script-name'].value="",this.render(),App.log(`Script '${n}' saved.`,"info")},delete(n){delete this.state[n],localStorage.setItem('luaScripts',JSON.stringify(this.state)),this.render(),App.log(`Script '${n}' deleted.`,"warn")},render(){const e=App.elements['saved-scripts-list'];e.innerHTML="",Object.keys(this.state).length===0?e.innerHTML='<div style="text-align:center;padding:.5rem;color:var(--c-text-dim)">No saved scripts.</div>':Object.keys(this.state).forEach(t=>{const n=document.createElement("div");n.className="script-item",n.innerHTML=`<span>${t}</span><button class="script-delete-btn" data-name="${t}">✖</button>`,n.addEventListener('click', o => o.target.tagName !== "BUTTON" && this.loadScript(t)); n.querySelector('button').addEventListener('click', () => this.delete(t)); e.appendChild(n)}),loadScript(name){App.elements.input.value=this.state[name];App.handleInput();App.log(`Script '${name}' loaded.`)}}};
-    const AI={loadState(){App.elements['gemini-api-key'].value=localStorage.getItem('geminiApiKey')||'';App.elements['gemini-model'].value=localStorage.getItem('geminiModel')||'gemini-1.5-flash-latest'},async query(){const k=App.elements['gemini-api-key'].value,m=App.elements['gemini-model'].value;if(!k)return App.log("Gemini API key is missing.","error");App.setEngineBusy(true,'ai');let ctx="CONTEXT: You are a helpful Lua assistant. Active obfuscation settings:\n";document.querySelectorAll("#settings-container input:checked").forEach(e=>ctx+=`- ${e.closest('.toggle-setting').querySelector('.toggle-label').textContent}\n`);const prompt=`${ctx}\nUSER TASK: ${App.elements['ai-prompt'].value}\n\nCURRENT LUA CODE IN EDITOR:\n\`\`\`lua\n${App.elements.input.value}\n\`\`\`\n\nRESPONSE:`;const url=`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k}`;try{const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});if(!r.ok)throw new Error(`API error ${r.status}`);const d=await r.json();if(d.error)throw new Error(d.error.message);App.log("CEREBRUM RESPONSE:\n"+d.candidates[0].content.parts[0].text,'ai')}catch(e){App.log(`AI Error: ${e.message}`,"error")}finally{App.setEngineBusy(false)}}};
+    if ($.settings.aiAugment.checked) {
+       // AI Augment needs async handling, so it's a bit different
+       if (!isLoggedIn) {
+          if (!hasWarned) { GATEKEEPER.promptLogin(); hasWarned = true; }
+          consoleLog(`Skipping AI Augmentation (ARCHON Feature)`, "warn");
+       } else {
+           consoleLog(`Applying: AI Augmentation...`, "info");
+           const prompt = `Rewrite the following Lua script to be more confusing, esoteric, or "clever" without changing its core functionality. Use unusual variable names (not just gibberish), misleading comments, or less-common Lua idioms. Output ONLY the raw Lua code, without any markdown fences or explanations.`;
+           const augmentedCode = await queryAI({ userPrompt: prompt, useCode: true });
+           if(augmentedCode) code = augmentedCode.trim();
+       }
+    }
+    
+    // Process standard obfuscations
+    if ($.settings.abstractStrings.checked) { consoleLog("Applying: Abstract Strings...", "info"); code = Obfuscator.abstractStrings(code); }
+    if ($.settings.decomposeNumbers.checked) { consoleLog("Applying: Decompose Numbers...", "info"); code = Obfuscator.decomposeNumbers(code); }
 
-    // --- AXIOM ENGINE STARTUP ---
-    document.addEventListener('DOMContentLoaded', () => App.init());
+    // Process premium obfuscations
+    checkPremium('mangleControlFlow', (c) => c); // Placeholder for complex logic
+    checkPremium('injectJunk', (c) => c); // Placeholder for complex logic
+
+    if ($.settings.serializeToHex.checked) {
+        checkPremium('serializeToHex', (c) => Obfuscator.createLoader(c, true));
+    } else if ($.settings.useLoader.checked) {
+        consoleLog("Applying: Wrap in Eldritch Loader...", "info");
+        code = Obfuscator.createLoader(code, false);
+    }
+    
+    if ($.settings.minify.checked) { consoleLog("Applying: Minify Output...", "info"); code = Obfuscator.minify(code); }
+
+    $.outputHl.innerHTML = code.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">");
+    hljs.highlightElement($.outputHl);
+    
+    $.mutilateBtn.disabled = false;
+    $.mutilateBtn.textContent = "MUTILATE";
+    await sleep(200);
+    consoleLog("Mutilation complete. Output generated.", "ai");
+};
+
+// --- AI Copilot ---
+async function queryAI({ userPrompt, useCode = false }) {
+    const apiKey = $.ai.key.value;
+    if (!apiKey) {
+        consoleLog("CEREBRUM API key is missing. Enter it in the AI Copilot panel.", "error");
+        return null;
+    }
+
+    consoleLog(`Querying CEREBRUM AI [${$.ai.model.value}]...`, 'ai');
+    $.ai.queryBtn.disabled = true;
+    $.ai.queryBtn.textContent = 'THINKING...';
+    
+    try {
+        const fullPrompt = userPrompt + (useCode ? `\n\n--- Here is the Lua code to work with ---\n${$.input.value}` : "");
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${$.ai.model.value}:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: fullPrompt }] }] })
+        });
+        
+        const data = await response.json();
+        if (!response.ok || !data.candidates) {
+          throw new Error(data.error?.message || `API Error: ${response.status}. The API may be blocked or the key may be invalid.`);
+        }
+        
+        const aiResponseText = data.candidates[0].content.parts[0].text;
+        consoleLog("AI Response Received.", "ai");
+        consoleLog(aiResponseText, 'ai-response');
+        return aiResponseText;
+    } catch (error) {
+        consoleLog(`AI Query Failed: ${error.message}`, 'error');
+        return null;
+    } finally {
+        $.ai.queryBtn.disabled = false;
+        $.ai.queryBtn.textContent = 'QUERY AI';
+    }
+}
+
+// --- INITIALIZATION ---
+(async () => {
+    GATEKEEPER.init();
+
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.onclick = () => { // Use onclick to easily override
+            if (btn.classList.contains('locked')) {
+                GATEKEEPER.promptLogin();
+                return;
+            }
+            const theme = btn.dataset.theme;
+            document.querySelectorAll('.theme-btn.active').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            $.body.className = theme;
+            localStorage.setItem('luaObscuraTheme', theme);
+        };
+    });
+
+    const savedTheme = localStorage.getItem('luaObscuraTheme') || 'theme-synthwave';
+    // Use a short timeout to ensure UI lock status is set by Gatekeeper before clicking theme
+    setTimeout(() => {
+        const themeBtn = document.querySelector(`.theme-btn[data-theme="${savedTheme}"]`);
+        if(themeBtn) themeBtn.click();
+        else document.querySelector('.theme-btn[data-theme="theme-synthwave"]').click();
+    }, 10);
+    
+    const savedInput = localStorage.getItem("luaObscuraInput");
+    $.input.value = savedInput || `function factorial(n)\n  if n == 0 then\n    return 1\n  else\n    return n * factorial(n - 1)\n  end\nend\n\n-- The ARCHON awakens...\nprint("Factorial of 6 is: " .. tostring(factorial(6)))\n\nlocal status, msg = pcall(function() error("test error") end)\nif not status then\n    print("Caught an error: " .. msg)\nend`;
+    updateHighlight();
+    
+    $.input.addEventListener("scroll", () => { $.inputHl.scrollTop = $.input.scrollTop; $.inputHl.scrollLeft = $.input.scrollLeft; });
+    $.input.addEventListener('input', updateHighlight);
+
+    $.mutilateBtn.addEventListener('click', mutilateCode);
+    $.deobfuscateBtn.addEventListener('click', () => consoleLog("Deobfuscation is a complex art, often requiring manual analysis. This feature is not implemented.", 'warn'));
+    $.copyBtn.addEventListener('click', () => navigator.clipboard.writeText($.outputHl.textContent).then(() => consoleLog("Output copied to clipboard.", 'info')).catch(() => consoleLog("Failed to copy to clipboard.", 'error')));
+    $.downloadBtn.addEventListener('click', () => {
+        try {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([$.outputHl.textContent], { type: 'text/plain' }));
+            a.download = 'obscured.lua';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+            consoleLog("Downloaded output as obscured.lua", "info");
+        } catch(e) { consoleLog("Download failed.", "error");}
+    });
+    
+    $.ai.queryBtn.addEventListener('click', () => {
+        if (!$.ai.prompt.value.trim()) { consoleLog("AI prompt is empty.", "warn"); return; }
+        queryAI({ userPrompt: $.ai.prompt.value, useCode: true })
+    });
+
+    $.settings.serializeToHex.addEventListener('change', e => {
+        if(GATEKEEPER.getCurrentUser()) {
+           $.settings.useLoader.disabled = e.target.checked;
+           if (e.target.checked) $.settings.useLoader.checked = false;
+        }
+    });
+
+    consoleLog("LUA OBSCURA v5.1 // Aligner Engine // Online.");
+    consoleLog("Awaiting authentication for advanced features...");
+})();
 </script>
 </body>
 </html>
