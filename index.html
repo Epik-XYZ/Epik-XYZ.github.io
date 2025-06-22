@@ -3,348 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LUA OBSCURA v5.3 - Gatekeeper's Edict</title>
+    <title>LUA OBSCURA v5.5 - Sovereign Shell</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/lua.min.js"></script>
     
     <style>
-        /* CSS from v5.1 with enhancements for v5.3 */
         @import url('https://fonts.googleapis.com/css2?family=VT323&family=Fira+Code&display=swap');
         
-        :root{--font-main:'VT323',monospace;--font-code:'Fira+Code',monospace;--glow-color:#ff00ff;--glow-color-alt:#00ffff;--glow-color-ai:#ffff00;--main-text:#e0e0e0;--bg-color:#05050a;--border-color:#4a004a;--terminal-text:#00ff41;--hl-keyword:var(--glow-color);--hl-string:#98c379;--hl-number:#d19a66;--hl-comment:#5c6370;--hl-function:var(--glow-color-alt)}
-        .theme-matrix{--glow-color:#00ff41;--glow-color-alt:#008f11;--border-color:#005d00;--terminal-text:#00ff41;--glow-color-ai:#adff2f;--hl-keyword:var(--glow-color);--hl-string:#ccff00}
-        .theme-fallout{--glow-color:#ffa500;--glow-color-alt:#d1b900;--border-color:#6d4f00;--terminal-text:#ffa500;--glow-color-ai:#ffeb3b;--hl-keyword:var(--glow-color);--hl-function:var(--glow-color);--hl-string:#90ee90}
-        .theme-blueprint{--glow-color:#007bff;--glow-color-alt:#4da6ff;--border-color:#004a99;--bg-color:#f0f4f8;--main-text:#1a1a1a;--terminal-text:#0d6efd;--glow-color-ai:#fd7e14;--hl-keyword:#d73a49;--hl-string:#032f62;--hl-function:#6f42c1;--hl-comment:#6a737d}
-        .theme-cyberdeck{--glow-color:#ff33A8;--glow-color-alt:#00f0ff;--border-color:#491a6d;--bg-color:#020a16;--terminal-text:#e5e5e5;--glow-color-ai:#ffae00;--hl-keyword:#ff79c6;--hl-string:#50fa7b;--hl-function:#8be9fd}
-        .theme-vaporwave{--glow-color:#ff71ce;--glow-color-alt:#01cdfe;--border-color:#b441a1;--bg-color:#2c0c49;--terminal-text:#fff;--glow-color-ai:#f8e658;--hl-keyword:#f92672;--hl-string:#a6e22e;--hl-function:#66d9ef}
-        .theme-monochrome{--glow-color:#fff;--glow-color-alt:#aaa;--border-color:#666;--bg-color:#000;--main-text:#fff;--terminal-text:#fff;--glow-color-ai:#fff;--hl-keyword:#fff;--hl-string:#fff;--hl-function:#fff;--hl-number:#fff}
+        :root{--font-main:'VT323',monospace;--font-code:'Fira Code',monospace;--glow-color:#ff00ff;--glow-color-alt:#00ffff;--glow-color-ai:#ffff00;--main-text:#e0e0e0;--bg-color:#05050a;--border-color:#4a004a;}
+        /* Add theme variables here if needed */
 
         ::selection{background-color:rgba(0,123,255,0.4)}
         
         body{background-color:var(--bg-color);color:var(--main-text);font-family:var(--font-main);font-size:1.2rem;transition:background-color .5s,color .5s;overflow-x:hidden; position: relative;}
         body::after { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%); background-size: 100% 4px; z-index: 1001; pointer-events: none; animation: scanline 10s linear infinite; }
         @keyframes scanline { from { background-position-y: 0px; } to { background-position-y: 200px; } }
-
-        /* V5.3 TROLL ANIMATIONS */
-        @keyframes flicker-effect { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
-        .troll-flicker { animation: flicker-effect 0.1s linear infinite; }
-        .troll-invert { filter: invert(1); }
-
+        
         .container{display:flex;flex-direction:column;min-height:100vh;padding:20px;box-sizing:border-box}
-        header{text-align:center;margin-bottom:20px;animation:fadeInDown 0.5s ease-out; z-index: 10;}
+        header{text-align:center;margin-bottom:20px;z-index: 10;}
+        h1{color:var(--glow-color);letter-spacing:5px;font-size:3em;margin:0;text-shadow:0 0 10px var(--glow-color);}.version{color:var(--glow-color-alt);font-size:1.2em}.description{font-family:var(--font-code);font-size:0.9em;max-width:800px;margin:10px auto}
+        .theme-selector{display:flex;justify-content:center;gap:10px;margin-top:15px;flex-wrap:wrap}.theme-btn{background:0 0;border:1px solid var(--border-color);color:var(--main-text);padding:5px 10px;cursor:pointer;transition:all .2s;font-family:var(--font-main);font-size:1rem;}.theme-btn:hover{box-shadow: 0 0 8px 0 var(--glow-color-alt);}.theme-btn.active{background-color:var(--glow-color);color:var(--bg-color);}
         
-        @keyframes fadeInDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes border-glow{from{box-shadow:0 0 8px var(--border-color),0 0 8px var(--border-color) inset}to{box-shadow:0 0 16px var(--glow-color-alt),0 0 12px var(--border-color) inset}}
-        
-        h1{color:var(--glow-color);letter-spacing:5px;font-size:3em;margin:0;text-shadow:0 0 10px var(--glow-color);}.version{color:var(--glow-color-alt);font-size:1.2em}.description{font-family:var(--font-code);font-size:0.9em;max-width:800px;margin:10px auto}.theme-selector{display:flex;justify-content:center;gap:10px;margin-top:15px;flex-wrap:wrap}.theme-btn{background:0 0;border:1px solid var(--border-color);color:var(--main-text);padding:5px 10px;cursor:pointer;transition:all .2s;font-family:var(--font-main);font-size:1rem;box-shadow: 0 0 3px 0 var(--border-color);}.theme-btn:hover{transform:translateY(-2px);box-shadow: 0 0 8px 0 var(--glow-color-alt);color: var(--glow-color-alt);}.theme-btn.active{background-color:var(--glow-color);color:var(--bg-color);box-shadow: 0 0 15px var(--glow-color)}
-        .main-grid{flex-grow:1;display:grid;grid-template-columns:300px 1fr;gap:20px;width:100%;max-width:1600px;margin:0 auto}@media(max-width:1000px){.main-grid{grid-template-columns:1fr}}
-        .left-panel{display:flex;flex-direction:column;gap:15px;animation:fadeInDown 0.7s ease-out}
-        .panel{border:1px solid var(--border-color);padding:15px;animation:border-glow 6s alternate infinite ease-in-out; background: radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 70%);}
+        .main-grid{flex-grow:1;display:grid;grid-template-columns:300px 1fr;gap:20px;width:100%;max-width:1600px;margin:0 auto;position:relative;}@media(max-width:1000px){.main-grid{grid-template-columns:1fr}}
+        .panel{border:1px solid var(--border-color);padding:15px;background: rgba(0,0,0,0.3);box-shadow: 0 0 8px var(--border-color) inset;}
         h2{font-size:1.5rem;text-shadow:0 0 5px var(--glow-color-alt);color:var(--glow-color-alt);margin:0 0 10px 0;border-bottom:1px dashed var(--border-color);padding-bottom:5px}
+
+        /* --- V5.5 SOVEREIGN SHELL LOCKDOWN SYSTEM --- */
+        #system-lock-overlay {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+            z-index: 100; display: flex; align-items: center; justify-content: center;
+            color: var(--glow-color); font-size: 5rem; text-shadow: 0 0 15px var(--glow-color);
+            transition: opacity 0.5s; pointer-events: none;
+        }
+        #system-lock-overlay.unlocked {
+            opacity: 0;
+        }
+        /* This disables pointer events on locked features making them unclickable */
+        .locked-feature {
+            pointer-events: none;
+            opacity: 0.4;
+            filter: grayscale(80%);
+        }
+        #user-status-panel { /* Always allow interaction with user panel */
+            pointer-events: auto !important;
+            opacity: 1 !important;
+            filter: none !important;
+        }
         
-        /* Input/Output and general UI styling */
-        .right-panel{display:flex;flex-direction:column;gap:20px;min-height:calc(100vh - 150px);animation:fadeInDown 0.9s ease-out}
-        .io-box{position:relative;display:flex;flex-direction:column;flex:1;border:1px solid var(--border-color);background-color:rgba(0,0,0,0.5);min-height:300px}.io-box h2{padding:10px 15px;margin:0;flex-shrink:0;border-bottom:1px solid var(--border-color);}
+        /* General UI Elements */
+        .io-box{position:relative;display:flex;flex-direction:column;flex:1;border:1px solid var(--border-color);background-color:rgba(0,0,0,0.5);min-height:300px}
         .editor-container{position:relative;width:100%;flex-grow:1}
-        .code-editor-shared-styles { position:absolute; inset:0; box-sizing:border-box; width:100%; height:100%; margin:0; padding:15px; border:none; outline:none; white-space:pre-wrap; word-break:break-all; font-family:var(--font-code); font-size:0.9rem; line-height:1.5; letter-spacing:normal; tab-size:4; -moz-tab-size:4; overflow: auto; transition: box-shadow 0.3s; }
+        .code-editor-shared-styles { position:absolute; inset:0; box-sizing:border-box; width:100%; height:100%; margin:0; padding:15px; border:none; outline:none; white-space:pre; word-break:break-all; font-family:var(--font-code); font-size:0.9rem; line-height:1.5; overflow: auto;}
         #input-lua { z-index:2; resize:none; background-color:transparent; color:transparent; caret-color:var(--glow-color); }
-        #input-lua:focus { box-shadow: 0 0 10px var(--glow-color-alt) inset; }
+        #input-lua[readonly] { caret-color: transparent; } /* Hide caret when locked */
         .input-highlighter, .output-code { z-index:1; }
 
-        .ai-copilot-panel input,.ai-copilot-panel select,.ai-copilot-panel textarea{width:100%;box-sizing:border-box;background:rgba(0,0,0,0.5);border:1px solid var(--border-color);color:var(--main-text);font-family:var(--font-code);font-size:0.9rem;margin-bottom:10px;padding:5px; transition: all 0.2s;}
-        .ai-copilot-panel input:focus,.ai-copilot-panel select:focus,.ai-copilot-panel textarea:focus { border-color: var(--glow-color-ai); box-shadow: 0 0 8px var(--glow-color-ai); outline: none;}
-
-        .action-btn{transition:all .15s ease;transform:scale(1);background:0 0;padding:10px 15px;width:100%;margin-bottom:10px;font-family:var(--font-main);font-size:1.5rem;letter-spacing:3px;cursor:pointer;border:2px solid}#action-btn:active{transform:scale(0.95);opacity:0.8;}
+        .copy-btn,.download-btn,.action-btn { transition:all .15s ease; border: 2px solid; background: transparent; cursor: pointer; }
+        .action-btn { font-family:var(--font-main); font-size: 1.5rem; letter-spacing: 3px; width: 100%; padding: 10px; margin-bottom: 10px;}
         #mutilate-btn:hover{background-color:var(--glow-color);color:var(--bg-color);box-shadow:0 0 20px var(--glow-color)}
-        #deobfuscate-btn:hover{background-color:var(--glow-color-alt);color:var(--bg-color);box-shadow:0 0 20px var(--glow-color-alt)}
 
-        /* V5.3 CONSOLE COMMAND SYSTEM */
+        /* Console and Admin CMD styling */
         .console-wrapper{width:100%;max-width:1600px;margin:15px auto 0;background-color:#000;border:1px solid var(--border-color);padding:10px;box-sizing:border-box; display: flex; flex-direction: column;}
         .console-log { height:120px; overflow-y:auto; flex-grow: 1; font-size:.9rem;font-family:var(--font-code); }
-        #console-input-wrapper { display: flex; align-items: center; border-top: 1px dashed var(--border-color); padding-top: 5px; margin-top: 5px; }
-        #console-input-wrapper::before { content: 'CMD>'; color: var(--glow-color-ai); font-family: var(--font-main); margin-right: 8px;}
+        .console-input-form { display: flex; align-items: center; border-top: 1px dashed var(--border-color); padding-top: 5px; margin-top: 5px; }
+        .console-input-form::before { content: 'CMD>'; color: var(--glow-color-ai); font-family: var(--font-main); margin-right: 8px;}
         #console-input { flex-grow: 1; background: transparent; border: none; color: var(--main-text); font-family: var(--font-code); font-size: 0.9rem; outline: none;}
-        
         .console-line{padding: 2px 0 2px 5px; opacity:0;transform:translateY(10px);transition:opacity 0.3s ease-out,transform 0.3s ease-out;}.console-line.visible{opacity:1;transform:translateY(0)}
-        .console-line.error{color:#ff3333;text-shadow: 0 0 5px #ff3333;}.console-line.warn{color:#ffeb3b}.console-line.info{color:var(--glow-color-alt)}.console-line.ai{color:var(--glow-color-ai)}
-        .console-line.admin-broadcast{ background: rgba(255,255,0,0.1); border-left: 3px solid var(--glow-color-ai); padding: 5px; margin: 2px 0; color: var(--glow-color-ai); text-shadow: 0 0 5px var(--glow-color-ai); }
-        .console-line.admin-broadcast::before { content: '[GLOBAL] '; }
-
-        /* V5.3 GATEKEEPER ADMIN STATUS */
+        .console-line.error{color:#ff3333;}.console-line.warn{color:#ffeb3b}.console-line.info{color:var(--glow-color-alt)}.console-line.ai{color:var(--glow-color-ai)}
+        .console-line.admin-broadcast{ background: rgba(255,255,0,0.1); border-left: 3px solid var(--glow-color-ai); padding: 5px; color: var(--glow-color-ai); text-shadow: 0 0 5px var(--glow-color-ai); }
         #user-status-panel .username.is-admin { text-shadow: 0 0 8px var(--glow-color-ai); }
-        #user-status-panel .username.is-admin::after { content: ' [ADMIN]'; font-size: 0.8em; }
-        
-        /* LOCK OVERLAY AND MODALS (Unchanged from 5.1) */
-        #gatekeeper-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px)}.modal-content{width:90%;max-width:400px;padding:25px;border:1px solid var(--border-color);background:var(--bg-color);animation:fadeInScaleUp 0.3s; box-shadow: 0 0 25px var(--border-color);}@keyframes fadeInScaleUp{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
-        .feature-container { position: relative; }
-        .lock-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); z-index: 5; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--glow-color); cursor: pointer; visibility: hidden; opacity: 0; transition: all 0.3s; text-shadow: 0 0 10px var(--glow-color);}
-        .locked .lock-overlay { visibility: visible; opacity: 1; }
-        .setting input:disabled+label, .ai-copilot-panel input:disabled, .ai-copilot-panel select:disabled, .ai-copilot-panel textarea:disabled, .action-btn:disabled { opacity:0.4; cursor: not-allowed; filter: grayscale(50%);}
+        #user-status-panel .username.is-admin::after { content: ' [OWNER]'; font-size: 0.8em; color: var(--glow-color-ai); }
+
+        #gatekeeper-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px)}
     </style>
 </head>
 <body>
-    <div id="gatekeeper-modal"><!-- Gatekeeper modal content will be populated by JS --></div>
+    <div id="gatekeeper-modal"><!-- Populated by JS --></div>
     <div class="container">
         <header>
             <h1>LUA OBSCURA</h1>
-            <div class="version">v5.3 // Gatekeeper's Edict</div>
-            <p class="description">Login as "Owner" to unlock Admin Commands. The ARCHON grants special privileges to its master. Type /help in the console below.</p>
+            <div class="version">v5.5 // Sovereign Shell</div>
+            <p class="description">System is in read-only mode. Authenticate as 'Owner' to unlock full functionality and administrative commands.</p>
             <div class="theme-selector">
                 <button class="theme-btn" data-theme="theme-synthwave">Synthwave</button>
                 <button class="theme-btn" data-theme="theme-matrix">Matrix</button>
                 <button class="theme-btn" data-theme="theme-fallout">Fallout</button>
-                <!-- Other theme buttons -->
             </div>
         </header>
 
-        <div class="main-grid">
+        <div class="main-grid" id="main-grid">
+            <div id="system-lock-overlay">🔒</div> <!-- Master Lock Overlay -->
+
             <div class="left-panel">
                  <div id="user-status-panel" class="panel"><!-- Populated by JS --></div>
-                 <div class="feature-container" id="ai-panel-wrapper">
-                    <div class="panel ai-panel ai-copilot-panel">
-                        <h2>CEREBRUM AI Copilot</h2>
-                        <input type="password" id="gemini-api-key" placeholder="Enter Gemini API Key">
-                        <select id="gemini-model"><option value="gemini-1.5-flash-latest">Gemini 1.5 Flash</option></select>
-                        <textarea id="ai-prompt" placeholder="AI Prompt..." rows="4"></textarea>
-                        <button id="query-ai-btn" class="action-btn" style="font-size:1rem;">QUERY AI</button>
-                    </div>
-                    <div class="lock-overlay">🔒</div>
+                 <div id="ai-copilot-panel" class="panel ai-panel ai-copilot-panel locked-feature">
+                    <h2>CEREBRUM AI Copilot</h2>
+                    <input type="password" id="gemini-api-key" placeholder="Enter Gemini API Key">
+                    <select id="gemini-model"><option value="gemini-1.5-flash-latest">Gemini 1.5 Flash</option></select>
+                    <textarea id="ai-prompt" placeholder="AI Prompt..." rows="4"></textarea>
+                    <button id="query-ai-btn" class="action-btn" style="font-size:1rem;">QUERY AI</button>
                 </div>
-                <div class="panel">
+                <div id="settings-panel" class="panel locked-feature">
                     <h2>Mutilation Settings</h2>
-                    <div class="setting"><input type="checkbox" id="aiAugment" disabled><label for="aiAugment">Engage AI Augmentation</label></div>
+                    <div class="setting"><input type="checkbox" id="aiAugment"><label for="aiAugment">Engage AI Augmentation</label></div>
                     <div class="setting"><input type="checkbox" id="abstractStrings" checked><label for="abstractStrings">Abstract Strings</label></div>
-                    <div class="feature-container"><div class="setting"><input type="checkbox" id="mangleControlFlow" disabled><label for="mangleControlFlow">Mangle Control-Flow</label></div><div class="lock-overlay">🔒</div></div>
-                    <!-- Other settings -->
+                    <!-- All other settings go here -->
                 </div>
-                <div class="panel">
+                <div id="controls-panel" class="panel locked-feature">
                     <h2>Engine Controls</h2>
                     <button id="mutilate-btn" class="action-btn">MUTILATE</button>
                     <button id="deobfuscate-btn" class="action-btn">REVEAL</button>
+                    <button id="download-btn" class="action-btn">DOWNLOAD .LUA</button>
                 </div>
             </div>
             <div class="right-panel">
-                 <div class="io-box">
+                 <div class="io-box locked-feature">
                      <h2>Input</h2>
                      <div class="editor-container">
-                         <textarea id="input-lua" class="code-editor-shared-styles" spellcheck="false"></textarea>
+                         <textarea id="input-lua" class="code-editor-shared-styles" spellcheck="false" readonly></textarea>
                          <pre class="input-highlighter"><code class="language-lua code-editor-shared-styles"></code></pre>
                      </div>
                  </div>
-                 <div class="io-box">
+                 <div class="io-box locked-feature">
                      <h2>Output</h2>
-                     <div class="editor-container"><pre class="output-code"><code class="language-lua code-editor-shared-styles"></code></pre></div>
+                     <div class="editor-container">
+                         <pre class="output-code"><code class="language-lua code-editor-shared-styles"></code></pre>
+                         <button id="copy-btn" class="action-btn" style="position:absolute; top: 10px; right: 10px; width: auto; font-size:1rem; padding: 5px 10px;">COPY</button>
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- V5.3 CONSOLE -->
+        
         <div class="console-wrapper">
             <div class="console-log" id="console-log"></div>
-            <div id="console-input-wrapper">
-                <input type="text" id="console-input" placeholder="Enter commands here... (type /help)">
-            </div>
+            <!-- IPAD FIX: Use a form for reliable submission -->
+            <form class="console-input-form" id="console-form">
+                <input type="text" id="console-input" placeholder="Enter commands... (locked until Owner logs in)">
+            </form>
         </div>
     </div>
     
 <script>
-// --- Populate Static Content (for brevity) ---
-document.getElementById('gatekeeper-modal').innerHTML=`<div class="modal-content"><h3 id="modal-title">Account Required</h3><p class="disclaimer" style="text-align:center;">SIMULATED login. DO NOT use a real password.</p><div id="login-form"><input type="text" id="login-username" placeholder="Username (try 'Owner')" class="ai-copilot-panel"><input type="password" id="login-password" placeholder="Password" class="ai-copilot-panel"><button id="login-btn" class="action-btn" style="font-size:1.2rem; margin:0 auto; width: 50%; border-color:var(--glow-color)">Login</button><div id="modal-message"></div><div class="modal-footer">Don't have an account? <span id="show-register-link" class="switch-link">Register</span></div></div><div id="register-form" style="display:none;"><!-- Register form here --></div></div>`;
+document.getElementById('gatekeeper-modal').innerHTML=`<div style="width:90%;max-width:400px;padding:25px;border:1px solid var(--border-color);background:var(--bg-color);"><h3 style="color:var(--glow-color-alt);text-align:center;">Authenticate</h3><p style="font-size:0.7rem;text-align:center;">SIMULATED login. Use 'Owner' for full access.</p><div id="login-form"><input type="text" id="login-username" placeholder="Username" style="width:100%;box-sizing:border-box;margin-bottom:10px;"><input type="password" id="login-password" placeholder="Password" style="width:100%;box-sizing:border-box;margin-bottom:15px;"><button id="login-btn" class="action-btn" style="font-size:1.2rem; margin:0 auto; display:block; width: 50%;">Login</button><div id="modal-message" style="margin-top:10px;color:var(--glow-color-ai);min-height:20px;text-align:center"></div></div></div>`;
+
 const getEl = id => document.getElementById(id);
 
-// --- V5.3 Global State & Elements ---
-let isAdmin = false;
+// --- V5.5 Global State & Elements ---
+let isOwner = false;
 
 const $ = {
     body: document.body,
     input: getEl("input-lua"),
-    inputHl: document.querySelector(".input-highlighter code"),
     outputHl: document.querySelector(".output-code code"),
     consoleLog: getEl("console-log"),
     consoleInput: getEl("console-input"),
-    mutilateBtn: getEl("mutilate-btn"),
-    gatekeeper: { /* gatekeeper elements */
-        modal: getEl("gatekeeper-modal"), loginBtn: getEl("login-btn"), showRegisterLink: getEl("show-register-link"),
-        userStatusPanel: getEl("user-status-panel"), modalMsg: getEl("modal-message"),
+    consoleForm: getEl("console-form"), // For iPad fix
+    lockOverlay: getEl("system-lock-overlay"),
+    gatekeeper: {
+        modal: getEl("gatekeeper-modal"),
+        loginBtn: getEl("login-btn"),
+        userStatusPanel: getEl("user-status-panel"),
+        modalMsg: getEl("modal-message"),
     },
-    ai: { /* AI elements */
-        key: getEl("gemini-api-key"), model: getEl("gemini-model"), prompt: getEl("ai-prompt"), queryBtn: getEl("query-ai-btn"),
-        panelWrapper: getEl("ai-panel-wrapper")
-    },
-    settings: { /* settings checkboxes */
-       aiAugment: getEl("aiAugment"), mangleControlFlow: getEl("mangleControlFlow"), abstractStrings: getEl("abstractStrings")
-    }
+    // Collect all elements that can be locked
+    lockedFeatures: document.querySelectorAll('.locked-feature')
 };
 
 // --- Core Utilities ---
 const consoleLog = (message, type = 'info') => {
     const line = document.createElement('div');
-    const sanitizedMessage = message.toString().replace(/</g, "<").replace(/>/g, ">");
-    line.innerHTML = sanitizedMessage;
+    line.innerHTML = message.toString().replace(/</g, "<").replace(/>/g, ">");
     line.className = `console-line ${type}`;
     $.consoleLog.appendChild(line);
     setTimeout(() => line.classList.add('visible'), 10);
     $.consoleLog.scrollTop = $.consoleLog.scrollHeight;
 };
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-const updateHighlight = () => { /* Syntax highlighting logic */ };
 
-// --- GATEKEEPER SYSTEM (V5.3) ---
+// --- V5.5 SOVEREIGN SHELL ACCESS CONTROL ---
+function lockSystems() {
+    $.lockOverlay.classList.remove('unlocked');
+    $.lockedFeatures.forEach(el => el.classList.add('locked-feature'));
+    $.input.readOnly = true;
+    getEl('console-input').placeholder = "Commands locked. Authenticate as Owner.";
+    consoleLog("SYSTEM LOCKED. Awaiting Owner authentication.", "warn");
+}
+
+function unlockSystems() {
+    $.lockOverlay.classList.add('unlocked');
+    $.lockedFeatures.forEach(el => el.classList.remove('locked-feature'));
+    $.input.readOnly = false;
+    getEl('console-input').placeholder = "Enter command... (/help)";
+    consoleLog("OWNER AUTHENTICATED. All systems unlocked.", "ai");
+}
+
+// --- GATEKEEPER SYSTEM (V5.5) ---
 const GATEKEEPER = {
     init() {
         $.gatekeeper.loginBtn.onclick = () => this.login();
-        this.updateUIForUserStatus();
+        this.updateUIForUserStatus(); // Initial setup
+        lockSystems(); // Lock system on page load
     },
     login() {
         const username = getEl('login-username').value.trim();
+        const password = getEl('login-password').value; // Not used for auth, but good to have
         if (!username) { $.gatekeeper.modalMsg.textContent = "Username is required."; return; }
-        
-        isAdmin = username.toLowerCase() === 'owner'; // Check for Admin
-        localStorage.setItem("loggedInUser", username);
 
-        $.gatekeeper.modalMsg.textContent = "Login Successful!";
+        localStorage.setItem("loggedInUser", username);
+        isOwner = username.toLowerCase() === 'owner';
+
+        $.gatekeeper.modalMsg.textContent = "Authentication processed.";
         setTimeout(() => {
             $.gatekeeper.modal.style.display = 'none';
             this.updateUIForUserStatus();
-            consoleLog(`User '${username}' authenticated.`, "ai");
-            if (isAdmin) {
-                consoleLog("ADMINISTRATIVE PRIVILEGES GRANTED.", "warn");
-                consoleLog("Type /help for a list of commands.", "warn");
-            }
+            isOwner ? unlockSystems() : lockSystems();
         }, 500);
     },
     logout() {
         const user = localStorage.getItem("loggedInUser");
         localStorage.removeItem("loggedInUser");
-        isAdmin = false;
+        isOwner = false;
         this.updateUIForUserStatus();
-        consoleLog(`User '${user}' logged out. Privileges revoked.`, "warn");
+        lockSystems(); // Always re-lock on logout
+        consoleLog(`User '${user}' logged out.`, "warn");
     },
     updateUIForUserStatus() {
         const user = localStorage.getItem("loggedInUser");
         const panel = $.gatekeeper.userStatusPanel;
-        const isLoggedIn = !!user;
 
         if (user) {
-            const adminClass = isAdmin ? 'is-admin' : '';
-            panel.innerHTML = `<h2>User Status</h2><p>Welcome, <span class="username ${adminClass}">${user}</span></p><button id="logout-btn" class="action-btn" style="font-size:1rem; border-color: #aaa; margin: 0;">Logout</button>`;
+            const ownerClass = isOwner ? 'is-admin' : '';
+            panel.innerHTML = `<h2>User Status</h2><p>Authenticated as: <span class="username ${ownerClass}">${user}</span></p><button id="logout-btn" class="action-btn" style="font-size:1rem; border-color: #aaa; margin: 0;">Logout</button>`;
             getEl('logout-btn').onclick = () => this.logout();
         } else {
-            panel.innerHTML = `<h2>User Status</h2><p>Logged in as: <span class="username">Guest</span></p><button id="login-prompt-btn" class="action-btn" style="font-size:1rem; margin:0;">Login / Register</button>`;
+            panel.innerHTML = `<h2>User Status</h2><p>Session: <span class="username">Guest</span></p><button id="login-prompt-btn" class="action-btn" style="font-size:1rem; margin:0;">Login</button>`;
             getEl('login-prompt-btn').onclick = () => $.gatekeeper.modal.style.display = 'flex';
         }
-        
-        // Lock/unlock features
-        document.querySelectorAll(".feature-container").forEach(el => isLoggedIn ? el.classList.remove('locked') : el.classList.add('locked'));
-        Object.values($.settings).forEach(el => el.disabled = !isLoggedIn);
-        Object.values($.ai).forEach(el => {
-             if(el instanceof HTMLElement && ['INPUT','SELECT','TEXTAREA','BUTTON'].includes(el.tagName)) el.disabled = !isLoggedIn;
-        });
-        if(isLoggedIn) $.ai.panelWrapper.classList.remove('locked'); else $.ai.panelWrapper.classList.add('locked');
     }
 };
 
-// --- ADMIN COMMAND SYSTEM (V5.3) ---
+// --- ADMIN COMMAND SYSTEM (V5.5 - with iPad Fix) ---
 const ADMIN_COMMANDS = {
-    execute(commandStr) {
+    handleSubmission(event) {
+        event.preventDefault(); // Stop page from reloading
+        if (!isOwner) {
+            consoleLog("Access Denied: Must be Owner to use commands.", "error");
+            return;
+        }
+        const commandStr = $.consoleInput.value;
         if (!commandStr.startsWith('/')) return;
+        
         const [command, ...args] = commandStr.slice(1).split(' ');
         const func = this.commands[command];
 
         if (func) {
-            if (func.admin && !isAdmin) {
-                consoleLog(`Access Denied: Command '${command}' requires admin privileges.`, "error");
-                return;
-            }
             func.action(args.join(' '));
         } else {
             consoleLog(`Unknown command: '${command}'. Type /help.`, "error");
         }
+        $.consoleInput.value = ''; // Clear input after execution
     },
     commands: {
         help: {
-            description: "Shows this help message.",
-            admin: false,
             action: () => {
-                consoleLog("--- Available Commands ---", "warn");
-                for (const [cmd, details] of Object.entries(ADMIN_COMMANDS.commands)) {
-                    if (details.admin && !isAdmin) continue;
-                    let line = `/${cmd} - ${details.description}`;
-                    if(details.admin) line += " [ADMIN]";
-                    consoleLog(line, "info");
-                }
+                consoleLog("--- Owner Commands ---", "warn");
+                consoleLog("/say <msg> - Broadcasts a global message.", "info");
+                consoleLog("/clear - Clears the console.", "info");
+                consoleLog("/js <code> - Executes raw JavaScript.", "info");
             }
         },
-        clear: {
-            description: "Clears the console log.",
-            admin: false,
-            action: () => { $.consoleLog.innerHTML = ""; consoleLog("Console cleared.", "info");}
-        },
-        say: {
-            description: "Broadcasts a global message. Usage: /say <message>",
-            admin: true,
-            action: (msg) => msg ? consoleLog(msg, "admin-broadcast") : consoleLog("Usage: /say <message>", "error")
-        },
-        troll: {
-            description: "Unleash client-side chaos. Usage: /troll <flicker|invert|matrix|spam>",
-            admin: true,
-            action: (effect) => {
-                switch(effect) {
-                    case 'flicker':
-                        $.body.classList.add('troll-flicker');
-                        consoleLog("Activating flicker effect...", "warn");
-                        setTimeout(() => $.body.classList.remove('troll-flicker'), 2000);
-                        break;
-                    case 'invert':
-                        $.body.classList.toggle('troll-invert');
-                        consoleLog("Toggled color inversion.", "warn");
-                        break;
-                    case 'matrix':
-                         consoleLog("This reality is a simulation.", "warn");
-                         const rain = document.createElement('canvas');
-                         rain.style.cssText = 'position:fixed;inset:0;z-index:9999;';
-                         document.body.appendChild(rain);
-                         const ctx = rain.getContext('2d');
-                         rain.width = window.innerWidth; rain.height = window.innerHeight;
-                         let drops = Array(Math.floor(rain.width / 15)).fill(1);
-                         const matrixChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
-                         const matrixInterval = setInterval(() => {
-                             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-                             ctx.fillRect(0, 0, rain.width, rain.height);
-                             ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--glow-color') || '#0F0';
-                             ctx.font = '15px monospace';
-                             for (let i = 0; i < drops.length; i++) {
-                                 const text = matrixChars.charAt(Math.floor(Math.random() * matrixChars.length));
-                                 ctx.fillText(text, i * 15, drops[i] * 15);
-                                 if (drops[i] * 15 > rain.height && Math.random() > 0.975) drops[i] = 0;
-                                 drops[i]++;
-                             }
-                         }, 33);
-                         setTimeout(() => { clearInterval(matrixInterval); document.body.removeChild(rain);}, 10000);
-                         break;
-                    case 'spam':
-                        consoleLog("Initiating console flood...", "warn");
-                        let i = 0;
-                        const spamInterval = setInterval(() => { consoleLog(`SYSTEM CORRUPTION DETECTED: ${Math.random()}`, 'error'); i++; if(i > 20) clearInterval(spamInterval); }, 100);
-                        break;
-                    default: consoleLog("Invalid troll effect. Available: flicker, invert, matrix, spam.", "error");
-                }
-            }
-        },
-        js: {
-            description: "Execute raw JavaScript. POWERFUL & DANGEROUS. Usage: /js <code>",
-            admin: true,
-            action: (code) => {
-                if (!code) { consoleLog("Usage: /js <code>", "error"); return; }
-                consoleLog(`Executing JS: ${code}`, "warn");
-                try {
-                    const result = eval(code);
-                    consoleLog(`JS Result: ${result}`, "info");
-                } catch(e) {
-                    consoleLog(`JS Execution Error: ${e.message}`, "error");
-                }
-            }
-        }
+        clear: { action: () => { $.consoleLog.innerHTML = ""; } },
+        say: { action: (msg) => msg ? consoleLog(msg, "admin-broadcast") : consoleLog("Usage: /say <message>", "error") },
+        js: { action: (code) => {
+            if (!code) return;
+            consoleLog(`Executing JS: ${code}`, "warn");
+            try { consoleLog(`JS Result: ${eval(code)}`, "info"); } 
+            catch(e) { consoleLog(`JS Error: ${e.message}`, "error"); }
+        }}
     }
 };
 
@@ -353,17 +288,14 @@ const ADMIN_COMMANDS = {
     GATEKEEPER.init();
 
     // Event Listeners
-    $.mutilateBtn.addEventListener('click', () => consoleLog("Mutilate logic placeholder.","info"));
-    $.deobfuscateBtn.addEventListener('click', () => consoleLog("Reveal logic placeholder.", "info"));
-    $.consoleInput.addEventListener('keyup', (e) => {
-        if (e.key === 'Enter') {
-            ADMIN_COMMANDS.execute($.consoleInput.value);
-            $.consoleInput.value = '';
-        }
-    });
+    // IPAD FIX: Listen to the form's submit event
+    $.consoleForm.addEventListener('submit', (e) => ADMIN_COMMANDS.handleSubmission(e));
+    
+    // Other buttons - they will only be clickable when systems are unlocked
+    getEl('mutilate-btn').addEventListener('click', () => consoleLog("Mutilate system engaged...", "ai"));
+    getEl('deobfuscate-btn').addEventListener('click', () => consoleLog("Reveal system engaged...", "ai"));
 
-    consoleLog("LUA OBSCURA v5.3 // Gatekeeper's Edict // Online.");
-    consoleLog("Awaiting authentication for advanced features...");
+    consoleLog("LUA OBSCURA v5.5 // Sovereign Shell // Online.");
 })();
 </script>
 </body>
