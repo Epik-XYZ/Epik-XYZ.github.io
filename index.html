@@ -3,437 +3,405 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LUA OBSCURA v5.1 - Aligner Engine</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/lua.min.js"></script>
-    
+    <title>JSON Chatbot</title>
     <style>
-        /* CSS from v5.0 reused for base theme, but with v5.1 enhancements */
-        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Fira+Code&display=swap');
-        
-        :root{--font-main:'VT323',monospace;--font-code:'Fira Code',monospace;--glow-color:#ff00ff;--glow-color-alt:#00ffff;--glow-color-ai:#ffff00;--main-text:#e0e0e0;--bg-color:#05050a;--border-color:#4a004a;--terminal-text:#00ff41;--hl-keyword:var(--glow-color);--hl-string:#98c379;--hl-number:#d19a66;--hl-comment:#5c6370;--hl-function:var(--glow-color-alt)}
-        .theme-matrix{--glow-color:#00ff41;--glow-color-alt:#008f11;--border-color:#005d00;--terminal-text:#00ff41;--glow-color-ai:#adff2f;--hl-keyword:var(--glow-color);--hl-string:#ccff00}
-        .theme-fallout{--glow-color:#ffa500;--glow-color-alt:#d1b900;--border-color:#6d4f00;--terminal-text:#ffa500;--glow-color-ai:#ffeb3b;--hl-keyword:var(--glow-color);--hl-function:var(--glow-color);--hl-string:#90ee90}
-        .theme-blueprint{--glow-color:#007bff;--glow-color-alt:#4da6ff;--border-color:#004a99;--bg-color:#f0f4f8;--main-text:#1a1a1a;--terminal-text:#0d6efd;--glow-color-ai:#fd7e14;--hl-keyword:#d73a49;--hl-string:#032f62;--hl-function:#6f42c1;--hl-comment:#6a737d}
-        .theme-cyberdeck{--glow-color:#ff33A8;--glow-color-alt:#00f0ff;--border-color:#491a6d;--bg-color:#020a16;--terminal-text:#e5e5e5;--glow-color-ai:#ffae00;--hl-keyword:#ff79c6;--hl-string:#50fa7b;--hl-function:#8be9fd}
-        .theme-vaporwave{--glow-color:#ff71ce;--glow-color-alt:#01cdfe;--border-color:#b441a1;--bg-color:#2c0c49;--terminal-text:#fff;--glow-color-ai:#f8e658;--hl-keyword:#f92672;--hl-string:#a6e22e;--hl-function:#66d9ef}
-        .theme-monochrome{--glow-color:#fff;--glow-color-alt:#aaa;--border-color:#666;--bg-color:#000;--main-text:#fff;--terminal-text:#fff;--glow-color-ai:#fff;--hl-keyword:#fff;--hl-string:#fff;--hl-function:#fff;--hl-number:#fff}
-
-        ::selection{background-color:rgba(0,123,255,0.4)}
-        
-        body{background-color:var(--bg-color);color:var(--main-text);font-family:var(--font-main);font-size:1.2rem;transition:background-color .5s,color .5s;overflow-x:hidden; position: relative;}
-        /* ENHANCED: Added atmospheric scanline effect */
-        body::after { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%); background-size: 100% 4px; z-index: 1001; pointer-events: none; animation: scanline 10s linear infinite; }
-        @keyframes scanline { from { background-position-y: 0px; } to { background-position-y: 200px; } }
-
-        .container{display:flex;flex-direction:column;min-height:100vh;padding:20px;box-sizing:border-box}
-        header{text-align:center;margin-bottom:20px;animation:fadeInDown 0.5s ease-out; z-index: 10;}
-        
-        @keyframes fadeInDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes border-glow{from{box-shadow:0 0 8px var(--border-color),0 0 8px var(--border-color) inset}to{box-shadow:0 0 16px var(--glow-color-alt),0 0 12px var(--border-color) inset}}
-        @keyframes text-flicker{0%{opacity:1;text-shadow:0 0 10px var(--glow-color)}50%{opacity:.8;text-shadow:0 0 12px var(--glow-color)}100%{opacity:1;text-shadow:0 0 10px var(--glow-color)}}
-        @keyframes pulse-glow{0%{box-shadow:0 0 8px var(--glow-color)}50%{box-shadow:0 0 18px var(--glow-color)}100%{box-shadow:0 0 8px var(--glow-color)}}
-        
-        h1{color:var(--glow-color);letter-spacing:5px;font-size:3em;margin:0;animation:text-flicker 5s linear infinite}.version{color:var(--glow-color-alt);font-size:1.2em}.description{font-family:var(--font-code);font-size:0.9em;max-width:800px;margin:10px auto}.theme-selector{display:flex;justify-content:center;gap:10px;margin-top:15px;flex-wrap:wrap}.theme-btn{background:0 0;border:1px solid var(--border-color);color:var(--main-text);padding:5px 10px;cursor:pointer;transition:all .2s;font-family:var(--font-main);font-size:1rem;box-shadow: 0 0 3px 0 var(--border-color);}.theme-btn:hover{transform:translateY(-2px);box-shadow: 0 0 8px 0 var(--glow-color-alt);color: var(--glow-color-alt);}.theme-btn.active{background-color:var(--glow-color);color:var(--bg-color);animation:pulse-glow 2s infinite}.main-grid{flex-grow:1;display:grid;grid-template-columns:300px 1fr;gap:20px;width:100%;max-width:1600px;margin:0 auto}@media(max-width:1000px){.main-grid{grid-template-columns:1fr}}.left-panel{display:flex;flex-direction:column;gap:15px;animation:fadeInDown 0.7s ease-out}
-        
-        /* ENHANCED: Panels now have more depth */
-        .panel{border:1px solid var(--border-color);padding:15px;animation:border-glow 6s alternate infinite ease-in-out; background: radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 70%);}
-        
-        .ai-panel h2{color:var(--glow-color-ai);border-bottom-color:var(--glow-color-ai)}
-        h2{font-size:1.5rem;text-shadow:0 0 5px var(--glow-color-alt);color:var(--glow-color-alt);margin:0 0 10px 0;border-bottom:1px dashed var(--border-color);padding-bottom:5px}
-        
-        .setting{display:flex;align-items:center;user-select:none;margin-bottom: 5px;}
-        .setting input{display:none}
-        .setting label{font-family:var(--font-code);font-size:.9rem;cursor:pointer;position:relative;padding-left:25px}
-        .setting label::before{content:'';position:absolute;left:0;top:2px;width:15px;height:15px;border:1px solid var(--glow-color-alt);background-color:transparent;transition:all 0.2s}
-        .setting input:checked+label::before{transform:rotate(45deg)}.setting input:checked+label::after{content:'X';font-family:var(--font-main);color:var(--glow-color);position:absolute;left:4px;top:-2px;font-size:1.2rem;animation:pop 0.2s}
-        @keyframes pop{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
-        
-        .action-btn{transition:all .15s ease;transform:scale(1);background:0 0;padding:10px 15px;width:100%;margin-bottom:10px;font-family:var(--font-main);font-size:1.5rem;letter-spacing:3px;cursor:pointer;border:2px solid}.action-btn:active{transform:scale(0.95);opacity:0.8;}
-        
-        .right-panel{display:flex;flex-direction:column;gap:20px;min-height:calc(100vh - 150px);animation:fadeInDown 0.9s ease-out}
-        .io-box{position:relative;display:flex;flex-direction:column;flex:1;border:1px solid var(--border-color);background-color:rgba(0,0,0,0.5);min-height:300px}.io-box h2{padding:10px 15px;margin:0;flex-shrink:0;border-bottom:1px solid var(--border-color);}
-        
-        /* --- V5.1 CRITICAL TEXTBOX ALIGNMENT & STYLING --- */
-        .editor-container{position:relative;width:100%;flex-grow:1}
-        .code-editor-shared-styles { position:absolute; inset:0; box-sizing:border-box; width:100%; height:100%; margin:0; padding:15px; border:none; outline:none; white-space:pre-wrap; word-break:break-all; font-family:var(--font-code); font-size:0.9rem; line-height:1.5; letter-spacing:normal; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; tab-size:4; -moz-tab-size:4; overflow: auto; transition: box-shadow 0.3s; }
-        #input-lua { z-index:2; resize:none; background-color:transparent; color:transparent; caret-color:var(--glow-color); /* ENHANCED */ }
-        /* ENHANCED: Input now glows when focused */
-        #input-lua:focus { box-shadow: 0 0 10px var(--glow-color-alt) inset; }
-        .input-highlighter, .output-code { z-index:1; }
-
-        .copy-btn{position:absolute;top:10px;right:15px;background:var(--glow-color);color:#000;border:none;font-family:var(--font-main);padding:5px 10px;cursor:pointer;opacity:.7;transition: all .2s;z-index:10; border: 1px solid black;}
-        .copy-btn:hover { opacity: 1; transform: scale(1.05); }
-        
-        /* ENHANCED: All input fields share a style */
-        .form-input{width:100%;box-sizing:border-box;background:rgba(0,0,0,0.5);border:1px solid var(--border-color);color:var(--main-text);font-family:var(--font-code);font-size:0.9rem;margin-bottom:10px;padding:5px; transition: all 0.2s;}
-        .form-input:focus { border-color: var(--glow-color-ai); box-shadow: 0 0 8px var(--glow-color-ai); outline: none;}
-
-        #query-ai-btn{border-color:var(--glow-color-ai);color:var(--glow-color-ai);font-size:1rem}
-        #query-ai-btn:hover{background-color:var(--glow-color-ai);color:var(--bg-color);box-shadow:0 0 15px var(--glow-color-ai)}
-        
-        .disclaimer{font-size:0.7rem;color:#888;margin-top:-5px}.console{width:100%;max-width:1600px;margin:15px auto 0;height:120px;background-color:#000;border:1px solid var(--border-color);padding:10px;overflow-y:auto;font-size:.9rem;font-family:var(--font-code);box-sizing:border-box}.console-line{padding: 2px 0 2px 15px; position:relative; opacity:0;transform:translateY(10px);transition:opacity 0.3s ease-out,transform 0.3s ease-out; text-shadow: 0 0 3px var(--terminal-text);}
-        /* ENHANCED: Console line styling */
-        .console-line::before { content: '>'; position: absolute; left: 5px; top: 2px; color: var(--glow-color-alt); }
-        .console-line.visible{opacity:1;transform:translateY(0)}.console-line.ai-response{background:rgba(255,255,255,0.05);padding:5px;border-left:2px solid var(--glow-color-ai);white-space:pre-wrap}.action-btn{background:0 0;padding:10px 15px;width:100%;margin-bottom:10px;font-family:var(--font-main);font-size:1.5rem;letter-spacing:3px;cursor:pointer;border:2px solid}
-        
-        /* ENHANCED: Button hover states */
-        #mutilate-btn{border-color: var(--glow-color);}
-        #deobfuscate-btn{border-color: var(--glow-color-alt);}
-        #download-btn{border-color: var(--main-text);}
-        #mutilate-btn:hover{background-color:var(--glow-color);color:var(--bg-color);box-shadow:0 0 20px var(--glow-color)}
-        #deobfuscate-btn:hover{background-color:var(--glow-color-alt);color:var(--bg-color);box-shadow:0 0 20px var(--glow-color-alt)}
-        #download-btn:hover{background-color:var(--main-text);color:var(--bg-color)}
-
-        /* Syntax Highlighting */
-        .hljs{color:var(--terminal-text);background:transparent}.hljs-keyword{color:var(--hl-keyword)}.hljs-string,.hljs-subst{color:var(--hl-string)}.hljs-number,.hljs-literal{color:var(--hl-number)}.hljs-comment{color:var(--hl-comment);font-style:italic}.hljs-title.function_{color:var(--hl-function)}.hljs-built_in{color:var(--glow-color-alt)}.ai-comment{color:var(--glow-color-ai)!important;font-style:normal!important;text-shadow:0 0 5px var(--glow-color-ai)}.console-line.error{color:#ff3333;text-shadow: 0 0 5px #ff3333;}.console-line.warn{color:#ffeb3b}.console-line.info{color:var(--glow-color-alt)}.console-line.ai{color:var(--glow-color-ai)}
-
-        /* --- V5.1 GATEKEEPER SYSTEM & LOCK OVERLAY --- */
-        #gatekeeper-modal{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px)}.modal-content{width:90%;max-width:400px;padding:25px;border:1px solid var(--border-color);background:var(--bg-color);animation:fadeInScaleUp 0.3s; box-shadow: 0 0 25px var(--border-color);}@keyframes fadeInScaleUp{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}.modal-content h3{color:var(--glow-color-alt);text-align:center}.modal-content input{width:100%;box-sizing:border-box;margin-bottom:15px}.modal-actions{display:flex;gap:10px}.modal-footer{margin-top:15px;text-align:center;font-size:0.9rem}.modal-footer .switch-link{color:var(--glow-color-alt);cursor:pointer;text-decoration:underline}
-        .modal-message {margin-top:10px;color:var(--glow-color-ai);min-height:20px;text-align:center}
-        
-        #user-status-panel .username{color:var(--glow-color-ai)}
-        
-        .feature-container { position: relative; }
-        .lock-overlay { position: absolute; inset: -1px; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); z-index: 5; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--glow-color); cursor: pointer; visibility: hidden; opacity: 0; transition: all 0.3s; text-shadow: 0 0 10px var(--glow-color);}
-        .feature-container.locked .lock-overlay { visibility: visible; opacity: 1; }
-        .theme-btn.locked { opacity: 0.4; pointer-events: none; }
-        .feature-container.locked *:not(.lock-overlay) {
-            filter: grayscale(50%);
-            pointer-events: none;
+        :root {
+            --body-bg: #f4f7f6;
+            --chat-bg: #ffffff;
+            --user-msg-bg: #007bff;
+            --bot-msg-bg: #e9e9eb;
+            --header-bg: #0069d9;
+            --text-light: #ffffff;
+            --text-dark: #333333;
+            --border-color: #e0e0e0;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
+        body {
+            background-color: var(--body-bg);
+            font-family: var(--font-family);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #chat-container {
+            width: 90%;
+            max-width: 700px;
+            height: 90vh;
+            max-height: 800px;
+            background-color: var(--chat-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: var(--header-bg);
+            color: var(--text-light);
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        #settings-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        #settings-btn:hover {
+            opacity: 1;
+        }
+
+        #main-chat-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        #chat-box {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            padding: 10px 15px;
+            border-radius: 18px;
+            max-width: 75%;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background-color: var(--user-msg-bg);
+            color: var(--text-light);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot-message {
+            background-color: var(--bot-msg-bg);
+            color: var(--text-dark);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        #input-area {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        #user-input {
+            flex-grow: 1;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            padding: 10px 15px;
+            font-size: 1rem;
+            margin-right: 10px;
+        }
+
+        #user-input:focus {
+            outline: none;
+            border-color: var(--user-msg-bg);
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        #send-btn {
+            background-color: var(--user-msg-bg);
+            color: var(--text-light);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        #send-btn:hover { background-color: #0056b3; }
+        #send-btn:disabled { background-color: #999; cursor: not-allowed; }
+
+        /* Settings Panel Styles */
+        #settings-panel {
+            padding: 20px;
+            flex-grow: 1;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+        }
+        #settings-panel h3 { margin-top: 0; }
+        #json-input {
+            flex-grow: 1;
+            font-family: monospace;
+            font-size: 0.9rem;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            resize: none;
+            margin-bottom: 10px;
+        }
+        #update-json-btn {
+            padding: 10px 20px;
+            border: none;
+            background-color: var(--user-msg-bg);
+            color: white;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        #update-json-btn:hover { background-color: #0056b3; }
+        #json-status {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        .status-success { color: green; }
+        .status-error { color: red; }
     </style>
 </head>
 <body>
-    <div id="gatekeeper-modal"><!-- Gatekeeper modal content will be populated by JS --></div>
-    <div class="container">
-        <header>
-            <h1>LUA OBSCURA</h1>
-            <div class="version">v5.1 // Aligner Engine</div>
-            <p class="description">Authenticate with the GATEKEEPER to unlock the ARCHON's full potential. Basic obfuscation is a privilege; true alchemy requires an account.</p>
-            <div class="theme-selector">
-                <button class="theme-btn" data-theme="theme-synthwave">Synthwave</button>
-                <button class="theme-btn" data-theme="theme-matrix">Matrix</button>
-                <button class="theme-btn" data-theme="theme-fallout">Fallout</button>
-                <button class="theme-btn theme-btn-locked" data-theme="theme-blueprint">Blueprint</button>
-                <button class="theme-btn theme-btn-locked" data-theme="theme-cyberdeck">Cyberdeck</button>
-                <button class="theme-btn theme-btn-locked" data-theme="theme-vaporwave">Vaporwave</button>
-                <button class="theme-btn theme-btn-locked" data-theme="theme-monochrome">Monochrome</button>
-            </div>
-        </header>
 
-        <div class="main-grid">
-            <div class="left-panel">
-                 <div id="user-status-panel" class="panel">
-                    <!-- User status content will be populated by JS -->
-                 </div>
-                 <div class="feature-container" id="ai-panel-wrapper">
-                    <div class="panel ai-panel">
-                        <h2>CEREBRUM AI Copilot</h2>
-                        <input type="password" id="gemini-api-key" placeholder="Enter Gemini API Key" class="form-input">
-                        <select id="gemini-model" class="form-input">
-                            <option value="gemini-1.5-flash-latest">Gemini 1.5 Flash (Fast)</option>
-                            <option value="gemini-1.5-pro-latest">Gemini 1.5 Pro (Powerful)</option>
-                        </select>
-                        <textarea id="ai-prompt" placeholder="AI Prompt..." rows="4" class="form-input"></textarea>
-                        <button id="query-ai-btn" class="action-btn" style="font-size:1rem;">QUERY AI</button>
-                    </div>
-                    <div class="lock-overlay">🔒</div>
-                </div>
-                <div class="panel">
-                    <h2>Mutilation Settings</h2>
-                    <div class="setting"><input type="checkbox" id="aiAugment"><label for="aiAugment">Engage AI Augmentation</label></div>
-                    <div class="setting"><input type="checkbox" id="mangleNames" checked><label for="mangleNames">Mangle Variable Names</label></div>
-                    <div class="setting"><input type="checkbox" id="renameGlobals" checked><label for="renameGlobals">Localize Global Functions</label></div>
-                    <div class="setting"><input type="checkbox" id="abstractStrings" checked><label for="abstractStrings">Abstract Strings</label></div>
-                    <div class="setting"><input type="checkbox" id="decomposeNumbers" checked><label for="decomposeNumbers">Decompose Numbers</label></div>
-                    <div class="feature-container">
-                        <div class="setting"><input type="checkbox" id="mangleControlFlow"><label for="mangleControlFlow">Mangle Control-Flow</label></div>
-                        <div class="lock-overlay">🔒</div>
-                    </div>
-                    <div class="feature-container">
-                        <div class="setting"><input type="checkbox" id="injectJunk"><label for="injectJunk">Inject Junk Code</label></div>
-                        <div class="lock-overlay">🔒</div>
-                    </div>
-                    <div class="setting"><input type="checkbox" id="useLoader"><label for="useLoader">Wrap in Eldritch Loader</label></div>
-                    <div class="setting"><input type="checkbox" id="minify"><label for="minify">Minify Output</label></div>
-                </div>
-                <div class="panel">
-                    <h2>Engine Controls</h2>
-                    <button id="mutilate-btn" class="action-btn">MUTILATE</button>
-                    <button id="deobfuscate-btn" class="action-btn">REVEAL</button>
-                    <button id="download-btn" class="action-btn">DOWNLOAD .LUA</button>
-                </div>
+    <div id="chat-container">
+        <div id="chat-header">
+            <span>Chatbot</span>
+            <button id="settings-btn" title="Edit JSON Data">⚙</button>
+        </div>
+
+        <div id="main-chat-area">
+            <div id="chat-box">
+                <div class="message bot-message">Hello! Try asking me a question. You can edit my knowledge by clicking the settings (⚙) icon.</div>
             </div>
-            <div class="right-panel">
-                 <div class="io-box">
-                     <h2>Input</h2>
-                     <div class="editor-container">
-                         <textarea id="input-lua" class="code-editor-shared-styles" spellcheck="false"></textarea>
-                         <pre class="input-highlighter"><code class="language-lua code-editor-shared-styles"></code></pre>
-                     </div>
-                 </div>
-                 <div class="io-box">
-                     <h2>Output</h2>
-                     <div class="editor-container">
-                         <pre class="output-code"><code class="language-lua code-editor-shared-styles"></code></pre>
-                         <button id="copy-btn" class="copy-btn">COPY</button>
-                     </div>
-                </div>
+            <div id="input-area">
+                <input type="text" id="user-input" placeholder="Type your message...">
+                <button id="send-btn" title="Send">
+                    <span>➤</span>
+                </button>
             </div>
         </div>
-        <div class="console" id="console"></div>
+
+        <div id="settings-panel">
+            <h3>Edit Chatbot JSON Data</h3>
+            <textarea id="json-input"></textarea>
+            <p id="json-status"></p>
+            <button id="update-json-btn">Update & Close</button>
+        </div>
     </div>
-    
-<script>
-// --- MODAL & STATIC CONTENT POPULATION ---
-document.getElementById('gatekeeper-modal').innerHTML=`
-<div class="modal-content">
-    <h3 id="modal-title">Account Required</h3>
-    <p class="disclaimer" style="text-align: center;">This is a SIMULATED login system. DO NOT use a real password.</p>
-    <div id="login-form">
-        <input type="text" id="login-username" placeholder="Username" class="form-input">
-        <input type="password" id="login-password" placeholder="Password" class="form-input">
-        <button id="login-btn" class="action-btn" style="font-size:1.2rem; margin:0 auto; display:block; width:50%;">Login</button>
-        <div id="modal-message" class="modal-message"></div>
-        <div class="modal-footer">Don't have an account? <span id="show-register-link" class="switch-link">Register</span></div>
-    </div>
-    <div id="register-form" style="display:none;">
-        <input type="text" id="register-username" placeholder="Username" class="form-input">
-        <input type="password" id="register-password" placeholder="Password" class="form-input">
-        <input type="password" id="register-confirm-password" placeholder="Confirm Password" class="form-input">
-        <button id="register-btn" class="action-btn" style="font-size:1.2rem; margin:0 auto; display:block; width:50%">Register</button>
-        <div id="modal-message-register" class="modal-message"></div>
-        <div class="modal-footer">Already have an account? <span id="show-login-link" class="switch-link">Login</span></div>
-    </div>
-</div>`;
 
-// --- V5.1 Aligner Engine (Restored Script)---
-const getEl = id => document.getElementById(id);
-
-const $ = {
-    body: document.body,
-    input: getEl("input-lua"),
-    inputHl: document.querySelector(".input-highlighter code"),
-    outputHl: document.querySelector(".output-code code"),
-    console: getEl("console"),
-    mutilateBtn: getEl("mutilate-btn"),
-    deobfuscateBtn: getEl("deobfuscate-btn"),
-    downloadBtn: getEl("download-btn"),
-    copyBtn: getEl("copy-btn"),
-    settings: {
-        aiAugment: getEl("aiAugment"),
-        mangleNames: getEl("mangleNames"),
-        renameGlobals: getEl("renameGlobals"),
-        abstractStrings: getEl("abstractStrings"),
-        decomposeNumbers: getEl("decomposeNumbers"),
-        mangleControlFlow: getEl("mangleControlFlow"),
-        injectJunk: getEl("injectJunk"),
-        useLoader: getEl("useLoader"),
-        minify: getEl("minify"),
-    },
-    gatekeeper: {
-        modal: getEl("gatekeeper-modal"),
-        loginForm: getEl("login-form"),
-        registerForm: getEl("register-form"),
-        loginBtn: getEl("login-btn"),
-        registerBtn: getEl("register-btn"),
-        showLoginLink: getEl("show-login-link"),
-        showRegisterLink: getEl("show-register-link"),
-        modalMsg: getEl("modal-message"),
-        modalMsgReg: getEl("modal-message-register"),
-        userStatusPanel: getEl("user-status-panel"),
-    },
-    ai: {
-        panelWrapper: getEl("ai-panel-wrapper"),
-        key: getEl("gemini-api-key"),
-        model: getEl("gemini-model"),
-        prompt: getEl("ai-prompt"),
-        queryBtn: getEl("query-ai-btn"),
-    }
-};
-
-const consoleLog = (message, type = 'info') => {
-    const line = document.createElement('div');
-    line.innerHTML = `> ${message.replace(/</g, "<").replace(/>/g, ">")}`;
-    line.className = `console-line ${type}`;
-    $.console.appendChild(line);
-    setTimeout(() => line.classList.add('visible'), 10);
-    $.console.scrollTop = $.console.scrollHeight;
-};
-
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-const updateHighlight = () => {
-    const code = $.input.value;
-    $.inputHl.innerHTML = code.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">") + "\n";
-    hljs.highlightElement($.inputHl);
-    localStorage.setItem("luaObscuraInput", code);
-};
-
-const GATEKEEPER = {
-    init() {
-        $.gatekeeper.showRegisterLink.onclick = () => this.switchForm('register');
-        $.gatekeeper.showLoginLink.onclick = () => this.switchForm('login');
-        $.gatekeeper.modal.onclick = (e) => { if (e.target.id === 'gatekeeper-modal') this.showModal(false); };
-        $.gatekeeper.registerBtn.onclick = () => this.register();
-        $.gatekeeper.loginBtn.onclick = () => this.login();
-        document.querySelectorAll(".lock-overlay").forEach(el => el.onclick = () => this.promptLogin());
-        
-        this.updateUIForUserStatus();
-    },
-
-    getUsers() { return JSON.parse(localStorage.getItem("luaObscuraUsers") || "{}"); },
-    saveUsers(users) { localStorage.setItem("luaObscuraUsers", JSON.stringify(users)); },
-    getCurrentUser() { return localStorage.getItem("loggedInUser"); },
-
-    showModal(visible, form = 'login') {
-        $.gatekeeper.modal.style.display = visible ? 'flex' : 'none';
-        if (visible) {
-            this.switchForm(form);
-            $.gatekeeper.modalMsg.textContent = "";
-            $.gatekeeper.modalMsgReg.textContent = "";
-        }
-    },
-
-    switchForm(form) {
-        $.gatekeeper.loginForm.style.display = (form === 'login') ? 'block' : 'none';
-        $.gatekeeper.registerForm.style.display = (form === 'register') ? 'block' : 'none';
-        getEl("modal-title").textContent = (form === 'login') ? "GATEKEEPER Login" : "Create GATEKEEPER Account";
-    },
-
-    promptLogin() {
-        if (!this.getCurrentUser()) {
-            consoleLog("Authentication required for this feature.", "warn");
-            this.showModal(true, 'login');
-        }
-    },
-    
-    async register() {
-        const username = getEl('register-username').value.trim();
-        const password = getEl('register-password').value;
-        const confirm = getEl('register-confirm-password').value;
-        const msgEl = $.gatekeeper.modalMsgReg;
-
-        if (!username || !password) { msgEl.textContent = "Username and password cannot be empty."; return; }
-        if (password !== confirm) { msgEl.textContent = "Passwords do not match."; return; }
-        
-        const users = this.getUsers();
-        if (users[username]) { msgEl.textContent = "Username is already taken."; return; }
-
-        users[username] = password; // In a real app, hash this!
-        this.saveUsers(users);
-        msgEl.textContent = "Registration successful! Logging in...";
-        await sleep(1000);
-        this.login(username, password);
-    },
-
-    async login(username, password) {
-        username = username || getEl('login-username').value.trim();
-        password = password || getEl('login-password').value;
-        const msgEl = $.gatekeeper.modalMsg;
-
-        if (!username || !password) { msgEl.textContent = "Please enter username and password."; return; }
-        const users = this.getUsers();
-        if (!users[username] || users[username] !== password) {
-            msgEl.textContent = "Invalid username or password."; return;
-        }
-
-        localStorage.setItem("loggedInUser", username);
-        msgEl.textContent = "Login Successful!";
-        await sleep(500);
-        this.showModal(false);
-        this.updateUIForUserStatus();
-        consoleLog(`User '${username}' logged in. ARCHON features unlocked.`, "ai");
-    },
-
-    logout() {
-        const user = this.getCurrentUser();
-        localStorage.removeItem("loggedInUser");
-        this.updateUIForUserStatus();
-        consoleLog(`User '${user}' logged out. Features locked.`, "warn");
-    },
-
-    updateUIForUserStatus() {
-        const user = this.getCurrentUser();
-        const panel = $.gatekeeper.userStatusPanel;
-        const isLoggedIn = !!user;
-
-        if (user) {
-            panel.innerHTML = `<h2>User Status</h2><p>Welcome, <span class="username">${user}</span></p><button id="logout-btn" class="action-btn" style="font-size:1rem; border-color: #aaa; margin: 0;">Logout</button>`;
-            getEl('logout-btn').onclick = () => this.logout();
-        } else {
-            panel.innerHTML = `<h2>User Status</h2><p>Logged in as: <span class="username">Guest</span></p><button id="login-prompt-btn" class="action-btn" style="font-size:1rem; margin:0;">Login / Register</button>`;
-            getEl('login-prompt-btn').onclick = () => this.showModal(true, 'login');
-        }
-        this.toggleFeatureAccess(isLoggedIn);
-    },
-
-    toggleFeatureAccess(isLoggedIn) {
-        document.querySelectorAll(".feature-container").forEach(el => {
-            isLoggedIn ? el.classList.remove('locked') : el.classList.add('locked');
-        });
-        
-        document.querySelectorAll('.theme-btn-locked').forEach(btn => {
-            isLoggedIn ? btn.classList.remove('locked') : btn.classList.add('locked');
-        });
-        
-        const activeThemeBtn = document.querySelector('.theme-btn.active');
-        if (activeThemeBtn && activeThemeBtn.classList.contains('locked')) {
-            document.querySelector('.theme-btn[data-theme="theme-synthwave"]').click();
-        }
-    }
-};
-
-const Obfuscator = {
-    mutilate(code, settings) {
-        consoleLog("Mutilation initiated...", "info");
-        // Simple placeholders, the logic for v5.1 was complex
-        if(settings.mangleNames) {
-             consoleLog("Mangling variable names...", "info");
-             code = code.replace(/local\s+(\w+)\s*=/g, 'local __var =');
-        }
-        if(settings.minify) {
-             consoleLog("Minifying code...", "info");
-             code = code.replace(/--.*/g, '').replace(/\s+/g, ' ').trim();
-        }
-        return code;
-    }
-}
-
-
-// --- INITIALIZATION ---
-(async () => {
-    GATEKEEPER.init();
-
-    document.querySelectorAll('.theme-btn').forEach(btn => {
-        btn.onclick = () => {
-            if (btn.classList.contains('locked')) { GATEKEEPER.promptLogin(); return; }
-            const theme = btn.dataset.theme;
-            document.body.className = theme;
-            document.querySelectorAll('.theme-btn.active').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+    <script>
+        // Default chatbot data
+        let chatData = {
+            "greetings": [{ "hello ": "how ", "how ": "are ", "are ": "you ", "you ": "doing ", "doing ": "today ", "yo": "what ", "what ": "up ", "did ": "you ", "did you ": "need ", "need ": "help ", "help ": "i ", "i ": "can ", "can ": "assist ", "assist ": "you " }],
+            "farewells": [{ "goodbye ": "see ", "see ": "you ", "you ": ["later ", "again "], "later ": "take ", "take ": "care ", "cya ": "see " }],
+            "questions": [{ "what ": ["is ", "are ", "do ", "did ", "can ", "will ", "should ", "was ", "would "], "who ": ["is ", "are ", "was ", "made ", "invented ", "wrote ", "created ", "will "], "when ": ["is ", "are ", "will ", "did ", "was ", "can ", "do "], "where ": ["is ", "are ", "do ", "can ", "did ", "will ", "should "], "why ": ["is ", "are ", "do ", "did ", "should ", "can't ", "wouldn't "], "how ": ["are ", "is ", "do ", "did ", "can ", "will ", "much ", "many ", "long ", "old "], "which ": ["is ", "are ", "one "], "are ": ["you ", "we ", "they ", "there "], "is ": ["it ", "that ", "there ", "this "], "do ": ["you ", "we ", "they ", "i "], "did ": ["you ", "we ", "they ", "it "], "can ": ["you ", "i ", "we ", "it "], "will ": ["you ", "it ", "we "], "should ": ["i ", "we "], "could ": ["you ", "i ", "we "], "would ": ["you ", "it "], "you ": ["know ", "think ", "like ", "want ", "need ", "have ", "remember ", "see ", "going ", "from ", "doing ", "serious ", "kidding ", "ready ", "sure ", "tell ", "show ", "explain ", "repeat ", "help ", "hear "], "i ": ["ask ", "go ", "get ", "start ", "try ", "say ", "help "], "we ": ["go ", "start ", "do ", "need ", "know ", "get "], "they ": ["know ", "coming ", "here "], "it ": ["work ", "rain ", "matter ", "possible ", "true ", "finished ", "start ", "be "], "there ": ["a ", "any ", "more "], "the ": ["time ", "date ", "weather ", "meaning ", "purpose ", "capital ", "best ", "rules ", "plan ", "problem ", "solution ", "answer ", "difference ", "options "], "a ": ["robot ", "problem ", "solution ", "chance ", "way "], "your ": ["name ", "purpose ", "favorite ", "opinion ", "plan ", "age "], "his ": ["name "], "her ": ["name "], "is ": "it ", "it ": "going ", "know ": ["about ", "the ", "if "], "think ": ["about ", "so "], "like ": ["to ", "that "], "need ": ["to ", "help ", "a "], "want ": ["to ", "a "], "about ": ["it ", "that ", "ai ", "science ", "history ", "art "], "to ": ["go ", "do ", "see ", "know ", "start ", "stop ", "eat "], "much ": ["is ", "does ", "time "], "many ": ["are ", "do ", "people "], "long ": ["is ", "will ", "have "], "old ": ["are ", "is "], "help ": ["me ", "us ", "with "], "tell ": ["me ", "us "], "show ": ["me ", "us "], "me ": ["more ", "a ", "the "], "us ": ["more ", "the "], "more ": ["about ", "information "], "a ": ["story ", "joke ", "fact ", "hint "], "made ": ["you ", "this ", "that "], "invented ": ["the "], "wrote ": ["the "], "created ": ["you ", "this "], "does ": ["it ", "that "], "it ": "cost ", "of ": ["life ", "france "], "in ": ["charge ", "the "], "one ": ["is "], "that ": ["true ", "possible ", "correct ", "what "], "repeat ": ["that "], "ask ": ["a "], "a ": "question ", "for ": ["help ", "a "], "go ": ["now ", "there ", "to "], "do ": ["that ", "this ", "it "], "with ": ["this ", "that "]}]
         };
-    });
-    
-    $.input.addEventListener("scroll", () => { $.inputHl.scrollTop = $.input.scrollTop; $.inputHl.scrollLeft = $.input.scrollLeft; });
-    $.input.addEventListener('input', updateHighlight);
-    $.mutilateBtn.onclick = () => {
-        const settings = {};
-        for (const key in $.settings) { settings[key] = $.settings[key].checked; }
-        const result = Obfuscator.mutilate($.input.value, settings);
-        $.outputHl.textContent = result;
-        hljs.highlightElement($.outputHl);
-    }
 
-    const savedInput = localStorage.getItem("luaObscuraInput") || `function welcome()\n  return "Hello, please log in to unlock full features."\nend\n\nprint(welcome())`;
-    $.input.value = savedInput;
-    updateHighlight();
+        // DOM Elements
+        const chatBox = document.getElementById('chat-box');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const settingsBtn = document.getElementById('settings-btn');
+        const mainChatArea = document.getElementById('main-chat-area');
+        const settingsPanel = document.getElementById('settings-panel');
+        const jsonInput = document.getElementById('json-input');
+        const updateJsonBtn = document.getElementById('update-json-btn');
+        const jsonStatus = document.getElementById('json-status');
+        
+        let allWords = {};
+        let allKeys = [];
 
-    consoleLog("LUA OBSCURA v5.1 // Aligner Engine // Online.");
-})();
-</script>
+        // --- Core Chatbot Logic ---
+
+        const updateKnowledgeBase = () => {
+            try {
+                // Ensure all categories exist, even if empty, to prevent errors
+                const data = chatData;
+                if (!data.greetings) data.greetings = [{}];
+                if (!data.farewells) data.farewells = [{}];
+                if (!data.questions) data.questions = [{}];
+                
+                allWords = {
+                    ...(data.greetings[0] || {}),
+                    ...(data.farewells[0] || {}),
+                    ...(data.questions[0] || {}),
+                };
+                allKeys = Object.keys(allWords);
+                return true;
+            } catch (error) {
+                console.error("Failed to update knowledge base:", error);
+                return false;
+            }
+        };
+
+        const sendMessage = () => {
+            const userText = userInput.value.trim();
+            if (userText === "" || sendBtn.disabled) return;
+
+            displayMessage(userText, 'user');
+            userInput.value = '';
+            toggleInput(false);
+            
+            setTimeout(() => {
+                const botResponse = generateBotResponse(userText);
+                typeBotResponse(botResponse);
+            }, 1000);
+        };
+        
+        const displayMessage = (text, sender) => {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', `${sender}-message`);
+            messageElement.textContent = text;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return messageElement;
+        };
+        
+        const generateBotResponse = (userText) => {
+            const userWords = userText.toLowerCase().split(/\s+/);
+            let startWord = '';
+            
+            if (allKeys.length === 0) {
+                return "My knowledge base is empty. Please add some data in the settings.";
+            }
+
+            for (const word of userWords) {
+                const potentialKey = word + ' ';
+                if (allKeys.includes(potentialKey)) {
+                    startWord = potentialKey;
+                    break;
+                }
+            }
+            
+            if (!startWord) {
+                startWord = allKeys[Math.floor(Math.random() * allKeys.length)];
+            }
+            
+            let response = startWord;
+            let currentWord = startWord;
+            const responseLength = 5 + Math.floor(Math.random() * 8);
+
+            for (let i = 0; i < responseLength; i++) {
+                if (!currentWord) break;
+                const nextOptions = allWords[currentWord];
+                if (!nextOptions) break;
+                
+                const nextWord = Array.isArray(nextOptions)
+                    ? nextOptions[Math.floor(Math.random() * nextOptions.length)]
+                    : nextOptions;
+                    
+                response += nextWord;
+                currentWord = nextWord;
+            }
+
+            if (response.length <= startWord.length) {
+                return "I'm not sure how to respond to that. Could you ask in a different way?";
+            }
+            
+            return response.trim();
+        };
+
+        const typeBotResponse = (text) => {
+            const messageElement = displayMessage('', 'bot');
+            let index = 0;
+            const typingSpeed = 100;
+
+            const type = () => {
+                if (index < text.length) {
+                    messageElement.textContent += text.charAt(index);
+                    index++;
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                    setTimeout(type, typingSpeed);
+                } else {
+                    toggleInput(true);
+                }
+            };
+            type();
+        };
+
+        const toggleInput = (enabled) => {
+            userInput.disabled = !enabled;
+            sendBtn.disabled = !enabled;
+            if (enabled) {
+                userInput.focus();
+            }
+        };
+
+        // --- UI and Settings Logic ---
+
+        const toggleSettingsPanel = (show) => {
+            if (show) {
+                mainChatArea.style.display = 'none';
+                settingsPanel.style.display = 'flex';
+                jsonInput.value = JSON.stringify(chatData, null, 2); // Pretty-print JSON
+            } else {
+                mainChatArea.style.display = 'flex';
+                settingsPanel.style.display = 'none';
+            }
+        };
+
+        const handleUpdateJson = () => {
+            try {
+                const newData = JSON.parse(jsonInput.value);
+                chatData = newData; // Update global chatData object
+                if (updateKnowledgeBase()) {
+                    setJsonStatus('JSON updated successfully!', 'success');
+                    setTimeout(() => {
+                        toggleSettingsPanel(false);
+                        setJsonStatus(''); // Clear status after a delay
+                    }, 1000);
+                } else {
+                    setJsonStatus('Failed to build knowledge from JSON.', 'error');
+                }
+            } catch (e) {
+                setJsonStatus(`Error: Invalid JSON format. ${e.message}`, 'error');
+            }
+        };
+
+        const setJsonStatus = (message, type = 'error') => {
+            jsonStatus.textContent = message;
+            jsonStatus.className = type === 'success' ? 'status-success' : 'status-error';
+        };
+
+        // --- Event Listeners ---
+
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') sendMessage();
+        });
+        
+        settingsBtn.addEventListener('click', () => {
+            const isSettingsVisible = settingsPanel.style.display === 'flex';
+            toggleSettingsPanel(!isSettingsVisible);
+        });
+
+        updateJsonBtn.addEventListener('click', handleUpdateJson);
+
+        // --- Initialization ---
+        
+        // Load initial data on page load
+        updateKnowledgeBase(); 
+
+    </script>
 </body>
 </html>
